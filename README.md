@@ -1,12 +1,12 @@
 # HoodLens
 
-Production-oriented Robinhood Chain token intelligence built with Next.js, viem, Supabase, and a provider-isolated market-data layer. It reads ERC-20 metadata directly from the configured chain; unavailable indexed analytics are never fabricated.
+Production-oriented Robinhood Chain token intelligence built with Next.js, viem, Supabase, GeckoTerminal, and Blockscout. It reads ERC-20 metadata directly from the configured chain; unavailable indexed analytics are never fabricated.
 
 ## Architecture and features
 
 The App Router UI calls validated, rate-limited route handlers. `TokenService` checks bytecode, independently reads ERC-20 methods, consults optional Supabase caching, requests legitimate market data through `MarketDataProvider`, calculates a deterministic risk score, then persists snapshots. Supabase stores tokens, metric history, holders, transactions, risk snapshots, and rankings. RLS allows public reads and denies browser writes by omission; all ingestion uses the server-only service role.
 
-Included: address search, live contract metadata, price/liquidity/volume where the market provider has a pair, responsive token page and discovery table, transparent risk deductions, copy/explorer UX, standardized API errors, health endpoint, security headers, protected cron entrypoint, SEO routes, tests, and complete migrations.
+Included: address search, live contract metadata, price/liquidity/volume and pool aggregation, OHLCV charts, holder concentration, paginated holders and transfers, responsive token and discovery views, transparent risk deductions, copy/explorer UX, standardized API errors, health endpoint, distributed database rate limiting, security headers, protected Vercel Cron discovery/refresh, SEO routes, tests, and migrations.
 
 ## Setup
 
@@ -18,7 +18,7 @@ npm run dev
 
 Required: `ROBINHOOD_RPC_URL`, `ROBINHOOD_CHAIN_ID`, `ROBINHOOD_CHAIN_NAME`, and `ROBINHOOD_EXPLORER_URL`. Verify the current official Robinhood chain ID and explorer for the network you target. `NEXT_PUBLIC_APP_URL` controls canonical URLs.
 
-For persistence, create a Supabase project and apply `supabase/migrations/0001_initial.sql` using the Supabase CLI (`supabase db push`), then set `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and server-only `SUPABASE_SERVICE_ROLE_KEY`. Never expose the service role value through a `NEXT_PUBLIC_` variable. `INDEXER_BASE_URL` defaults to DexScreener; `INDEXER_API_KEY` is optional. Set a strong `CRON_SECRET` and POST to `/api/cron/refresh` with `Authorization: Bearer <secret>` from Vercel Cron or a worker.
+For persistence, create a Supabase project and apply every file under `supabase/migrations` using the Supabase CLI (`supabase db push`), then set `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and server-only `SUPABASE_SERVICE_ROLE_KEY`. Never expose the service role value through a `NEXT_PUBLIC_` variable. GeckoTerminal defaults to its verified `robinhood` network, while Blockscout defaults to Robinhood's official explorer API. Set a strong `CRON_SECRET`; Vercel sends it as a bearer token to the configured ten-minute cron route.
 
 ## Commands
 
@@ -39,6 +39,6 @@ Risk starts at 100 and deducts only from available objective inputs: holder conc
 
 ## Known limitations
 
-RPC alone cannot efficiently produce historical prices, complete holders, DEX classifications, or chain-wide new-token discovery. These sections explicitly show unavailable states until a Robinhood-compatible indexer feeds the included tables. DexScreener coverage depends on its current Robinhood Chain support. The in-process rate limiter is a useful per-instance guard; high-scale deployment should replace it with a durable Redis/Vercel KV limiter. The cron endpoint is intentionally a protected architecture seam and does not scan the entire chain synchronously.
+GeckoTerminal and Blockscout are third-party public services and can rate-limit or deny requests; every section degrades to an explicit unavailable state. Blockscout transfers remain `TRANSFER` unless a DEX source supplies authoritative trade direction. Holder methodology excludes only zero/burn addresses and contracts confidently labeled as pools or pairs. The Supabase limiter falls back to a per-instance limiter if migration `0003_rate_limits.sql` has not been applied. Cron discovers tokens from GeckoTerminal pool discovery rather than synchronously scanning the entire chain.
 
 Recommended next steps are a dedicated event indexer/worker, durable distributed rate limiting, provider-specific holder and transaction adapters, price-candle ingestion, and browser-level accessibility tests.

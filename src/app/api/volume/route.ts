@@ -1,0 +1,2 @@
+import {NextRequest,NextResponse} from "next/server";import {discovery} from "@/lib/db/queries";import {getEnv} from "@/config/env";import {rateLimit} from "@/lib/rate-limit";
+export async function GET(req:NextRequest){if(!await rateLimit(`volume:${req.headers.get("x-forwarded-for")??"local"}`,60))return NextResponse.json({error:{code:"RATE_LIMITED",message:"Too many requests."}},{status:429});return NextResponse.json({data:await discovery("volume",getEnv().ROBINHOOD_EXPLORER_URL)})}

@@ -1,1 +1,3 @@
-const hits=new Map<string,{count:number;reset:number}>();export function rateLimit(key:string,limit=30,windowMs=60_000){const now=Date.now(),entry=hits.get(key);if(!entry||entry.reset<now){hits.set(key,{count:1,reset:now+windowMs});return true}entry.count++;return entry.count<=limit}
+import {db} from "@/lib/db/supabase-server";
+const hits=new Map<string,{count:number;reset:number}>();
+export async function rateLimit(key:string,limit=30,windowMs=60_000){const client=db();if(client){try{const {data,error}=await client.rpc("consume_rate_limit",{p_key:key,p_limit:limit,p_window_seconds:Math.ceil(windowMs/1000)});if(!error&&typeof data==="boolean")return data}catch(error){console.error(JSON.stringify({event:"rate_limit_database_error",message:error instanceof Error?error.message:"unknown"}))}}const now=Date.now(),entry=hits.get(key);if(!entry||entry.reset<now){hits.set(key,{count:1,reset:now+windowMs});return true}entry.count++;return entry.count<=limit}
