@@ -1,0 +1,1 @@
+"use client";export default function ErrorPage({reset}:{reset:()=>void}){return <main className="shell" style={{padding:42}}><div className="panel" style={{padding:30}}><h1>Something went wrong</h1><button onClick={reset}>Try again</button></div></main>}

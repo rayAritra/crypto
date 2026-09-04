@@ -1,0 +1,4 @@
+export function compactNumber(v:number|null|undefined,currency=false){if(v==null||!Number.isFinite(v))return "—"; const a=Math.abs(v); if(currency&&v!==0&&a<0.01)return `$${v.toPrecision(3)}`; return new Intl.NumberFormat("en-US",{style:currency?"currency":"decimal",currency:"USD",notation:a>=1000?"compact":"standard",maximumFractionDigits:a<1?6:2}).format(v)}
+export function shortenAddress(v:string){return `${v.slice(0,6)}…${v.slice(-4)}`}
+export function ageFrom(iso:string){const s=Math.max(0,(Date.now()-new Date(iso).getTime())/1000);if(s<60)return `${Math.floor(s)}s`;if(s<3600)return `${Math.floor(s/60)}m`;if(s<86400)return `${Math.floor(s/3600)}h`;return `${Math.floor(s/86400)}d`}
+export function formatSupply(raw:string,decimals:number){const s=raw.padStart(decimals+1,"0"),cut=s.length-decimals;const whole=s.slice(0,cut);const fraction=s.slice(cut).replace(/0+$/,"").slice(0,4);return BigInt(whole).toLocaleString("en-US")+(fraction?`.${fraction}`:"")}
