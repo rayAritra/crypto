@@ -1,0 +1,5 @@
+"use client";
+import {useEffect,useState} from "react";import {CheckCircle2,Info,X} from "lucide-react";
+export type ToastDetail={message:string;kind?:"success"|"info"};
+export function notify(message:string,kind:ToastDetail["kind"]="success"){window.dispatchEvent(new CustomEvent<ToastDetail>("hoodlens:toast",{detail:{message,kind}}))}
+export function ToastViewport(){const[toasts,setToasts]=useState<Array<ToastDetail&{id:number}>>([]);useEffect(()=>{const receive=(event:Event)=>{const detail=(event as CustomEvent<ToastDetail>).detail,id=Date.now();setToasts(current=>[...current.slice(-2),{...detail,id}]);setTimeout(()=>setToasts(current=>current.filter(item=>item.id!==id)),2600)};window.addEventListener("hoodlens:toast",receive);return()=>window.removeEventListener("hoodlens:toast",receive)},[]);return <div className="toast-viewport" role="region" aria-label="Notifications">{toasts.map(toast=><div className="toast" role="status" key={toast.id}>{toast.kind==="info"?<Info/>:<CheckCircle2/>}<span>{toast.message}</span><button onClick={()=>setToasts(current=>current.filter(item=>item.id!==toast.id))} aria-label="Dismiss"><X/></button></div>)}</div>}
