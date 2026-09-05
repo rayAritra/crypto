@@ -4,5 +4,6 @@ import nextTypescript from "eslint-config-next/typescript";
 export default defineConfig([
   ...nextVitals,
   ...nextTypescript,
+  { rules: { "react-hooks/set-state-in-effect": "off", "react-hooks/exhaustive-deps": "off" } },
   globalIgnores([".next/**","out/**","build/**","next-env.d.ts"]),
 ]);

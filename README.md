@@ -33,6 +33,8 @@ npm run build
 
 Import the repository into Vercel, configure the variables above for Production, apply the database migration, and deploy. Use a Node.js runtime supported by the selected Next.js release. Check `/api/health` after deployment. Provider credentials stay in route/server modules.
 
+Production readiness requires a random `CRON_SECRET` of at least 32 characters. Configure the same value for Vercel Cron authorization. The per-instance Blockscout API may challenge server-originated requests; configure `BLOCKSCOUT_API_KEY` (or a production Blockscout API endpoint that accepts server traffic) and confirm that `/api/health` reports every service as `operational`. A `degraded` health response is intentionally HTTP 503 and must block deployment promotion.
+
 ## Methodology
 
 Risk starts at 100 and deducts only from available objective inputs: holder concentration, very low liquidity, incomplete metadata, and extreme trading imbalance. First-seen time is not treated as on-chain token age. The UI lists every deduction and never labels assets safe or scams. Trending uses log-normalized volume (30%), transaction activity (25%), holder growth (20%), liquidity (15%), and momentum (10%), preventing one raw metric from dominating.

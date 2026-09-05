@@ -1,0 +1,3 @@
+"use client";
+import { Star } from "lucide-react"; import type { RankedToken, Token } from "@/types/token"; import { useAppState } from "@/components/providers/AppState";
+export function WatchButton({ item, compact = false }: { item: RankedToken | { token: Token; metrics: RankedToken["metrics"] }; compact?: boolean }) { const state = useAppState(), active = state.isWatched(item.token.address); return <button className={`button ${active ? "active" : ""}`} aria-pressed={active} onClick={e => { e.preventDefault(); e.stopPropagation(); state.toggleWatch(item); }} title={active ? "Remove from watchlist" : "Add to watchlist"}><Star size={16} fill={active ? "currentColor" : "none"}/>{compact ? null : active ? "Watching" : "Watch"}</button>; }

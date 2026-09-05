@@ -1,0 +1,3 @@
+"use client";
+import { GitCompareArrows } from "lucide-react"; import type { RankedToken, Token } from "@/types/token"; import { useAppState } from "@/components/providers/AppState";
+export function CompareButton({ item, compact = false }: { item: RankedToken | { token: Token; metrics: RankedToken["metrics"] }; compact?: boolean }) { const s = useAppState(), active = s.compare.some(x => x.address.toLowerCase() === item.token.address.toLowerCase()); return <button className={`button ${active ? "active" : ""}`} aria-pressed={active} onClick={e => { e.preventDefault(); e.stopPropagation(); s.toggleCompare(item); }} title={active ? "Remove from comparison" : "Add to comparison"}><GitCompareArrows size={16}/>{compact ? null : active ? "Added" : "Compare"}</button>; }
