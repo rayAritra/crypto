@@ -475,18 +475,88 @@
 /* Site-wide Fixed Width Container */
 @utility site-container {
   width: 100%;
-  max-width: 1580px;
+  max-width: 1360px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: var(--spacing-margin-screen, 12px);
-  padding-right: var(--spacing-margin-screen, 12px);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  @media (min-width: 640px) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 .site-container {
   width: 100%;
-  max-width: 1580px;
+  max-width: 1360px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: var(--spacing-margin-screen, 12px);
-  padding-right: var(--spacing-margin-screen, 12px);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 640px) {
+  .site-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .site-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Micro-Grid and Institutional Glass Elements */
+.bg-micro-grid {
+  background-size: 24px 24px;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px
+  );
+}
+.hero-spotlight {
+  background: radial-gradient(
+    circle at 50% -10%,
+    rgba(189, 244, 81, 0.12) 0%,
+    rgba(18, 20, 18, 0.4) 45%,
+    transparent 75%
+  );
+}
+.terminal-card {
+  background: #0e110e;
+  border: 1px solid rgba(224, 255, 211, 0.09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.terminal-card-hover:hover {
+  border-color: rgba(189, 244, 81, 0.28);
+  box-shadow: 0 0 24px -6px rgba(189, 244, 81, 0.08);
+}
+.glow-lime {
+  box-shadow: 0 0 20px rgba(189, 244, 81, 0.35);
+}
+.glass-panel {
+  background: rgba(14, 17, 14, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(224, 255, 211, 0.1);
+}
+.pulse-dot {
+  animation: pulseGlow 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.18);
+  }
 }

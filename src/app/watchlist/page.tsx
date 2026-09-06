@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="w-full max-w-[1580px] mx-auto px-margin-screen site-container pt-8 sm:pt-10 pb-12 min-h-[calc(100vh-48px-64px)] flex-1 flex flex-col gap-6">
+    <main className="w-full max-w-[1360px] mx-auto site-container pt-8 sm:pt-10 pb-12 min-h-[calc(100vh-48px-64px)] flex-1 flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm">
         <div className="flex flex-col gap-1">

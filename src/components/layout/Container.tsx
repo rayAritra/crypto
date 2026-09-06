@@ -7,8 +7,8 @@ export interface ContainerProps {
 }
 
 /**
- * Common layout container enforcing the site-wide fixed width (max-w-[1580px])
- * and standardized margin padding (px-margin-screen), matching the Home page and Navbar.
+ * Common layout container enforcing the site-wide fixed width (max-w-[1360px])
+ * and standardized margin padding (site-container), matching the Home page and Navbar.
  */
 export function Container({
   children,
@@ -17,7 +17,7 @@ export function Container({
 }: ContainerProps) {
   return (
     <Component
-      className={`w-full max-w-[1580px] mx-auto px-margin-screen site-container ${className}`}
+      className={`w-full max-w-[1360px] mx-auto site-container ${className}`}
     >
       {children}
     </Component>

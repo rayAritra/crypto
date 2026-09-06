@@ -333,7 +333,7 @@ export function DiscoverClient({
   }
 
   return (
-    <main className="flex-1 w-full max-w-[1580px] mx-auto px-margin-screen site-container pt-8 sm:pt-10 pb-12 flex flex-col gap-6">
+    <main className="flex-1 w-full max-w-[1360px] mx-auto site-container pt-8 sm:pt-10 pb-12 flex flex-col gap-6">
       {/* Page Header Module */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm">
         <div className="flex flex-col gap-1">

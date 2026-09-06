@@ -37,7 +37,7 @@ export default async function Page({
 }) {
   const { address } = await params;
   return (
-    <main className="w-full max-w-[1580px] mx-auto px-margin-screen site-container py-space-md min-h-[calc(100vh-48px-64px)]">
+    <main className="w-full max-w-[1360px] mx-auto site-container py-space-md min-h-[calc(100vh-48px-64px)]">
       <TokenView address={address} />
     </main>
   );

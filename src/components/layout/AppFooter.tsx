@@ -5,14 +5,14 @@ import { usePathname } from "next/navigation";
 export function AppFooter() {
   const path = usePathname();
 
-  // On the homepage, the landing page renders its own dedicated dark AuthKit footer
-  if (path === "/") {
+  // On the landing pages, the landing page renders its own dedicated dark AuthKit footer
+  if (path === "/" || path === "/v0") {
     return null;
   }
 
   return (
     <footer className="bg-surface-container-lowest dark:bg-surface-container-lowest docked full-width bottom border-t border-outline-variant dark:border-outline-variant flat no shadows mt-auto">
-      <div className="flex flex-col md:flex-row justify-between items-center w-full max-w-[1580px] mx-auto px-margin-screen site-container py-space-md text-body-sm font-body-sm">
+      <div className="flex flex-col md:flex-row justify-between items-center w-full max-w-[1360px] mx-auto site-container py-space-md text-body-sm font-body-sm">
         <div className="flex flex-col sm:flex-row items-center sm:space-x-3 mb-2 md:mb-0">
           <span className="text-headline-sm font-headline-sm font-semibold text-primary dark:text-primary">
             HoodLens

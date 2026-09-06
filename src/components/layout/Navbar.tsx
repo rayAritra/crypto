@@ -52,15 +52,15 @@ export function Navbar() {
       ? `/compare?tokens=${state.compare.map((x) => x.address).join(",")}`
       : "/compare";
 
-  // Homepage has its own dedicated transparent LandingHeader
-  if (path === "/") {
+  // Landing pages have their own dedicated transparent LandingHeader
+  if (path === "/" || path === "/v0") {
     return <CommandPalette open={palette} onClose={() => setPalette(false)} />;
   }
 
   return (
     <>
       <header className="bg-surface dark:bg-surface docked full-width top-0 sticky z-50 border-b border-outline-variant dark:border-outline-variant flat no shadows">
-        <div className="flex justify-between items-center w-full max-w-[1580px] mx-auto px-margin-screen site-container h-[48px]">
+        <div className="flex justify-between items-center w-full max-w-[1360px] mx-auto site-container h-[48px]">
           {/* Brand & Network */}
           <Logo showBadge={true} />
 

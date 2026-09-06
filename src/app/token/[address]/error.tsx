@@ -5,7 +5,7 @@ import { FiAlertTriangle, FiArrowLeft, FiRefreshCw } from "react-icons/fi";
 
 export default function ErrorPage({ reset }: { reset: () => void }) {
   return (
-    <main className="w-full max-w-[1580px] mx-auto px-margin-screen site-container py-16 flex flex-col items-center justify-center">
+    <main className="w-full max-w-[1360px] mx-auto site-container py-16 flex flex-col items-center justify-center">
       <div className="w-full max-w-lg bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 text-center flex flex-col items-center shadow-xl">
         <div className="w-14 h-14 rounded-2xl bg-error-container/20 border border-error/40 flex items-center justify-center mb-4 text-error">
           <FiAlertTriangle className="text-2xl" />
