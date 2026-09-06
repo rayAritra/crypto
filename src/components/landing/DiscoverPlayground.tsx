@@ -89,7 +89,7 @@ export function DiscoverPlayground() {
 
   return (
     <section
-      className="py-20 px-4 sm:px-6 relative w-full"
+      className="pt-8 sm:pt-10 pb-20 px-4 sm:px-6 relative w-full"
       id="discovery-playground"
     >
       <div className="w-full max-w-4xl mx-auto text-center">

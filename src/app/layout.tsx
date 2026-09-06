@@ -85,7 +85,7 @@ export const viewport: Viewport = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-[#c7ff5b] selection:text-[#080a08]">
+      <body className="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-[#c7ff5b] selection:text-[#080a08] relative overflow-x-hidden">
         <AppStateProvider>
           <Suspense
             fallback={
