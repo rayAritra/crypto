@@ -2,14 +2,15 @@
 
 import { useAppState } from "@/components/providers/AppState";
 import { Button } from "@/components/shared/Button";
+import { Logo } from "@/components/shared/Logo";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowRight, FiMenu, FiSearch, FiX } from "react-icons/fi";
-import { RiRadarLine } from "react-icons/ri";
 import { CommandPalette } from "./CommandPalette";
 
 const links = [
+  { href: "/terminal", label: "Terminal" },
   { href: "/discover", label: "Discover" },
   { href: "/discover?view=trending", label: "Trending" },
   { href: "/discover?view=new", label: "New Tokens" },
@@ -42,8 +43,10 @@ export function Navbar() {
         setPalette(true);
       }
     };
+    const handleOpenSearch = () => setPalette(true);
+
     window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
+    window.addEventListener("hoodlens:open-search", handleOpenSearch);
   }, []);
 
   const compareHref =
@@ -51,27 +54,17 @@ export function Navbar() {
       ? `/compare?tokens=${state.compare.map((x) => x.address).join(",")}`
       : "/compare";
 
+  // Homepage has its own dedicated transparent LandingHeader
+  if (path === "/") {
+    return <CommandPalette open={palette} onClose={() => setPalette(false)} />;
+  }
+
   return (
     <>
       <header className="bg-surface dark:bg-surface docked full-width top-0 sticky z-50 border-b border-outline-variant dark:border-outline-variant flat no shadows">
         <div className="flex justify-between items-center w-full max-w-[1580px] mx-auto px-margin-screen site-container h-[48px]">
           {/* Brand & Network */}
-          <div className="flex items-center space-x-3">
-            <Link className="flex items-center space-x-2 group" href="/">
-              <div className="w-6 h-6 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary-fixed group-hover:border-primary-fixed transition-colors">
-                <RiRadarLine className="text-[15px]" />
-              </div>
-              <span className="text-headline-sm font-headline-sm font-semibold text-primary dark:text-primary tracking-tight">
-                HoodLens
-              </span>
-            </Link>
-            <div className="hidden sm:flex items-center h-5 px-2 bg-surface-container-low border border-outline-variant rounded-full text-data-mono-sm font-data-mono-sm text-on-surface-variant">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-pulse mr-1.5"></span>
-              <span>Robinhood Chain</span>
-              <span className="text-outline mx-1">/</span>
-              <span className="text-secondary-fixed">88899</span>
-            </div>
-          </div>
+          <Logo showBadge={true} />
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center space-x-6">
