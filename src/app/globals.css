@@ -139,3 +139,6 @@ body:before{display:none}.shell{width:min(1480px,calc(100% - 28px))}
 
 /* Prevent browser caret browsing from appearing on non-editable UI */
 body{caret-color:transparent}input,textarea,[contenteditable="true"]{caret-color:auto}
+
+/* Full-row token navigation */
+.desktop-token-table .token-table tbody tr{position:relative;cursor:pointer}.desktop-token-table .token-cell:before{content:"";position:absolute;z-index:1;inset:0}.desktop-token-table .row-actions{position:relative;z-index:2}.desktop-token-table .token-cell:focus-visible{outline:none}.desktop-token-table .token-table tbody tr:focus-within{background:#f7f7f3;box-shadow:inset 3px 0 #111}
