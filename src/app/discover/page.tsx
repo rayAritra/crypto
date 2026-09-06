@@ -1,3 +1,43 @@
-import {Suspense} from "react";import {discovery} from "@/lib/db/queries";import {getEnv} from "@/config/env";import type {RankedToken} from "@/types/token";import {DiscoverClient} from "@/components/discover/DiscoverClient";
-export const revalidate=60;export const metadata={title:"Discover Tokens",description:"Explore trending, new, high-volume, liquid, and unusual token activity tracked by HoodLens."};
-export default async function Page(){let trending:RankedToken[]=[],newTokens:RankedToken[]=[],volume:RankedToken[]=[];try{const explorer=getEnv().ROBINHOOD_EXPLORER_URL;[trending,newTokens,volume]=await Promise.all([discovery("trending",explorer),discovery("new",explorer),discovery("volume",explorer)])}catch{}return <main className="shell page"><div className="page-title"><p className="eyebrow">Token intelligence</p><h1>Discover</h1><p>Find notable activity across HoodLens-tracked tokens. Rankings are deterministic and informational.</p></div><Suspense><DiscoverClient trending={trending} newTokens={newTokens} volume={volume}/></Suspense></main>}
+import { DiscoverClient } from "@/components/discover/DiscoverClient";
+import { getEnv } from "@/config/env";
+import { discovery } from "@/lib/db/queries";
+import type { RankedToken } from "@/types/token";
+import { Suspense } from "react";
+
+export const revalidate = 60;
+export const metadata = {
+  title: "Discover — Institutional On-Chain Intelligence | Robinhood Chain",
+  description:
+    "Notable activity, liquidity shifts, and contract telemetry across Robinhood Chain tokens.",
+};
+
+export default async function DiscoverPage() {
+  let trending: RankedToken[] = [];
+  let newTokens: RankedToken[] = [];
+  let volume: RankedToken[] = [];
+
+  try {
+    const explorer = getEnv().ROBINHOOD_EXPLORER_URL;
+    [trending, newTokens, volume] = await Promise.all([
+      discovery("trending", explorer),
+      discovery("new", explorer),
+      discovery("volume", explorer),
+    ]);
+  } catch {}
+
+  return (
+    <Suspense
+      fallback={
+        <div className="flex-1 w-full max-w-[1720px] mx-auto p-8 text-center text-outline">
+          Loading live discovery signals...
+        </div>
+      }
+    >
+      <DiscoverClient
+        trending={trending}
+        newTokens={newTokens}
+        volume={volume}
+      />
+    </Suspense>
+  );
+}
