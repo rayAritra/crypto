@@ -10,7 +10,24 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
   description:
-    "Institutional clarity for Robinhood Chain. Real-time contract telemetry, zero-speculation risk scoring, multi-token benchmark matrix, and privacy-first watchlists.",
+    "Institutional clarity for Robinhood Chain. Real-time smart contract telemetry, deterministic risk forensics, multi-token benchmark matrix, and zero-tracking watchlists.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
+    description:
+      "Institutional clarity for Robinhood Chain. Real-time contract telemetry, zero-speculation risk scoring, multi-token benchmark matrix, and privacy-first watchlists.",
+    url: "/",
+    siteName: "HoodLens",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
+    description:
+      "Institutional clarity for Robinhood Chain. Real-time contract telemetry, deterministic risk forensics, and multi-token benchmarks.",
+  },
 };
 
 export default function Home() {

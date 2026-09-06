@@ -2,9 +2,24 @@ import { WatchlistClient } from "@/components/watchlist/WatchlistClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Watchlist — HoodLens",
+  title: "Watchlist — Private Local-First Portfolio Telemetry",
   description:
-    "Monitor tokens saved locally in your browser. Real-time telemetry and performance tracking on Robinhood Chain.",
+    "Monitor tokens saved locally in your browser. Real-time telemetry, risk tracking, and zero-tracking privacy on Robinhood Chain.",
+  alternates: {
+    canonical: "/watchlist",
+  },
+  openGraph: {
+    title: "Watchlist — Private Local-First Portfolio Telemetry | HoodLens",
+    description:
+      "Monitor tokens saved locally in your browser. Real-time telemetry, risk tracking, and zero-tracking privacy on Robinhood Chain.",
+    url: "/watchlist",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Watchlist — Private Local-First Portfolio Telemetry | HoodLens",
+    description:
+      "Monitor tokens saved locally in your browser. Real-time telemetry, risk tracking, and zero-tracking privacy on Robinhood Chain.",
+  },
 };
 
 export default function Page() {

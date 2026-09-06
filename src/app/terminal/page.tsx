@@ -12,9 +12,24 @@ import Link from "next/link";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Terminal — Institutional On-Chain Intelligence | Robinhood Chain",
+  title: "Terminal — Live Market Telemetry & Discovery",
   description:
     "Live market telemetry, active tokens, trending velocity, and discovery terminal on Robinhood Chain.",
+  alternates: {
+    canonical: "/terminal",
+  },
+  openGraph: {
+    title: "Terminal — Live Market Telemetry & Discovery | HoodLens",
+    description:
+      "Live market telemetry, active tokens, trending velocity, and discovery terminal on Robinhood Chain.",
+    url: "/terminal",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terminal — Live Market Telemetry & Discovery | HoodLens",
+    description:
+      "Live market telemetry, active tokens, trending velocity, and discovery terminal on Robinhood Chain.",
+  },
 };
 
 export default async function TerminalPage() {

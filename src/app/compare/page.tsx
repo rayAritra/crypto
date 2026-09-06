@@ -3,9 +3,24 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Compare Tokens — HoodLens",
+  title: "Compare — Multi-Token Benchmark Matrix",
   description:
     "Side-by-side multi-asset comparison of market depth, liquidity health, holder concentration, and risk parameters on Robinhood Chain.",
+  alternates: {
+    canonical: "/compare",
+  },
+  openGraph: {
+    title: "Compare — Multi-Token Benchmark Matrix | HoodLens",
+    description:
+      "Side-by-side multi-asset comparison of market depth, liquidity health, holder concentration, and risk parameters on Robinhood Chain.",
+    url: "/compare",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Compare — Multi-Token Benchmark Matrix | HoodLens",
+    description:
+      "Side-by-side multi-asset comparison of market depth, liquidity health, holder concentration, and risk parameters on Robinhood Chain.",
+  },
 };
 
 export default function Page() {

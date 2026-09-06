@@ -8,25 +8,78 @@ import { Suspense } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://hoodlens.io",
+  ),
   title: {
     default:
       "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
     template: "%s | HoodLens",
   },
   description:
-    "Live contract intelligence for people who want the full picture—price, liquidity, activity, ownership, and transparent risk on Robinhood Chain.",
+    "Institutional clarity for Robinhood Chain. Real-time smart contract telemetry, deterministic risk deductions, multi-token comparative benchmarking, and privacy-first local watchlists.",
+  applicationName: "HoodLens",
+  authors: [{ name: "HoodLens Core Team", url: "https://hoodlens.io" }],
+  generator: "Next.js",
+  keywords: [
+    "Robinhood Chain",
+    "Robinhood Crypto",
+    "Robinhood L2",
+    "on-chain intelligence",
+    "DEX screener",
+    "token analytics",
+    "smart contract audit",
+    "risk scoring",
+    "liquidity tracker",
+    "mempool stream",
+    "crypto terminal",
+    "EVM analytics",
+    "zero-speculation",
+  ],
+  creator: "HoodLens",
+  publisher: "HoodLens",
+  category: "finance",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "HoodLens — Institutional On-Chain Intelligence",
+    title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
     description:
-      "Robinhood Chain institutional token intelligence and analytics",
+      "Institutional clarity for Robinhood Chain. Real-time contract telemetry, deterministic risk scoring, multi-token benchmark matrix, and privacy-first watchlists.",
+    url: "https://hoodlens.io",
+    siteName: "HoodLens",
+    locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
+    description:
+      "Real-time contract telemetry, zero-speculation risk scoring, multi-token benchmark matrix, and privacy-first watchlists for Robinhood Chain.",
+    creator: "@hoodlens",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#080a08",
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#080a08" },
+    { media: "(prefers-color-scheme: light)", color: "#080a08" },
+  ],
+  colorScheme: "dark",
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

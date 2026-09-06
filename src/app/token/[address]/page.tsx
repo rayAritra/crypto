@@ -8,12 +8,25 @@ export async function generateMetadata({
   params: Promise<{ address: string }>;
 }): Promise<Metadata> {
   const { address } = await params;
+  const short = shortenAddress(address);
   const path = `/token/${address}`;
+  const title = `${short} — On-Chain Intelligence`;
+  const description = `Real-time liquidity, trade activity, holder concentration, and transparent risk deductions for contract ${address} on Robinhood Chain.`;
+
   return {
-    title: `${shortenAddress(address)} — On-Chain Intelligence | HoodLens`,
-    description: `Real-time liquidity, trade activity, holder concentration, and transparent risk deductions for contract ${address} on Robinhood Chain.`,
+    title,
+    description,
     alternates: { canonical: path },
-    openGraph: { url: path },
+    openGraph: {
+      title: `${title} | HoodLens`,
+      description,
+      url: path,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | HoodLens`,
+      description,
+    },
   };
 }
 

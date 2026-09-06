@@ -2,13 +2,29 @@ import { DiscoverClient } from "@/components/discover/DiscoverClient";
 import { getEnv } from "@/config/env";
 import { discovery } from "@/lib/db/queries";
 import type { RankedToken } from "@/types/token";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const revalidate = 60;
-export const metadata = {
-  title: "Discover — Institutional On-Chain Intelligence | Robinhood Chain",
+export const metadata: Metadata = {
+  title: "Discover — Signal Vectors & Token Discovery",
   description:
     "Notable activity, liquidity shifts, and contract telemetry across Robinhood Chain tokens.",
+  alternates: {
+    canonical: "/discover",
+  },
+  openGraph: {
+    title: "Discover — Signal Vectors & Token Discovery | HoodLens",
+    description:
+      "Notable activity, liquidity shifts, and contract telemetry across Robinhood Chain tokens.",
+    url: "/discover",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Discover — Signal Vectors & Token Discovery | HoodLens",
+    description:
+      "Notable activity, liquidity shifts, and contract telemetry across Robinhood Chain tokens.",
+  },
 };
 
 export default async function DiscoverPage() {

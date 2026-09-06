@@ -230,7 +230,7 @@ export function LandingHero() {
   return (
     <section
       ref={heroRef}
-      className="relative w-full h-screen min-h-[640px] flex flex-col justify-between pt-24 sm:pt-48 pb-0 px-0 overflow-hidden selection:bg-[#c7ff5b] selection:text-[#080a08]"
+      className="relative w-full h-screen min-h-[640px] flex flex-col justify-between pt-40 sm:pt-48 pb-0 px-0 overflow-hidden selection:bg-[#c7ff5b] selection:text-[#080a08]"
     >
       {/* Background Cosmic Atmosphere Spotlight */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[520px] spotlight-top pointer-events-none z-0"></div>
