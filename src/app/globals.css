@@ -136,3 +136,6 @@ body:before{display:none}.shell{width:min(1480px,calc(100% - 28px))}
 @media(prefers-reduced-motion:no-preference){.hero-board-list a{animation:market-row-in .55s cubic-bezier(.22,1,.36,1) both}.hero-board-list a:nth-child(1){animation-delay:.42s}.hero-board-list a:nth-child(2){animation-delay:.5s}.hero-board-list a:nth-child(3){animation-delay:.58s}@keyframes market-row-in{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}}
 @media(prefers-reduced-motion:reduce){.hero *,.hero:before,.hero-board:before{animation:none!important;transition:none!important}}
 @media(max-width:760px){.hero:hover h1{letter-spacing:-.075em}.hero-board:hover{transform:none}.hero-board-list a:hover{padding-left:16px}.hero-board-list a:after{display:none}.hero-board-list a:hover>div{padding-right:0}}
+
+/* Prevent browser caret browsing from appearing on non-editable UI */
+body{caret-color:transparent}input,textarea,[contenteditable="true"]{caret-color:auto}
