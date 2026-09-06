@@ -10,7 +10,12 @@ import type { TokenAnalytics } from "@/types/token";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { FiArrowRight, FiTrash2 } from "react-icons/fi";
-import { RiArrowRightUpLine, RiStarLine } from "react-icons/ri";
+import {
+  RiArrowRightUpLine,
+  RiLayoutGridLine,
+  RiStarLine,
+  RiTableLine,
+} from "react-icons/ri";
 
 function getRiskBadge(score: number | null | undefined) {
   const s = score ?? 80;
@@ -53,6 +58,7 @@ export function WatchlistClient() {
   const s = useAppState();
   const [data, setData] = useState<TokenAnalytics[]>([]);
   const [loading, setLoading] = useState(false);
+  const [mobileView, setMobileView] = useState<"cards" | "table">("cards");
 
   useEffect(() => {
     if (!s.ready || !s.watchlist.length) {
@@ -229,161 +235,390 @@ export function WatchlistClient() {
         </div>
       </div>
 
-      {/* Main Dense Table */}
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-lg">
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[900px]">
-            <thead>
-              <tr className="border-b border-outline-variant bg-surface-container/30 text-label-caps text-outline uppercase">
-                <th className="py-3 px-4 w-12 text-center">#</th>
-                <th className="py-3 px-4">Token</th>
-                <th className="py-3 px-4 text-right">Price</th>
-                <th className="py-3 px-4 text-right">24H Change</th>
-                <th className="py-3 px-4 text-right">24H Volume</th>
-                <th className="py-3 px-4 text-right">Liquidity</th>
-                <th className="py-3 px-4 text-center">HoodLens Risk</th>
-                <th className="py-3 px-4 text-right">Since Added</th>
-                <th className="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-outline-variant/40 font-body-sm">
-              {s.watchlist.map((saved, idx) => {
-                const x = data.find(
-                  (d) =>
-                    d.token.address.toLowerCase() ===
-                    saved.address.toLowerCase(),
-                );
-                const currentPrice = x?.metrics?.priceUsd;
-                const change =
-                  saved.addedPrice && currentPrice
-                    ? ((currentPrice - saved.addedPrice) / saved.addedPrice) *
-                      100
-                    : null;
-                const priceChange24h = x?.metrics?.priceChange24h;
+      {/* List Header & Mobile View Switcher */}
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-2 text-data-mono-sm font-data-mono-sm text-outline">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary-fixed"></span>
+          <span>{s.watchlist.length} Monitored Assets</span>
+        </div>
 
-                return (
-                  <tr
-                    key={saved.address}
-                    className="hover:bg-surface-container-high/30 transition-colors group"
-                  >
-                    <td className="py-3 px-4 text-center text-data-mono-sm text-outline">
+        {/* Mobile View Switcher */}
+        <div className="flex md:hidden items-center bg-surface-container-high/60 p-0.5 rounded-lg border border-outline-variant text-xs">
+          <button
+            type="button"
+            onClick={() => setMobileView("cards")}
+            className={`px-2.5 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${
+              mobileView === "cards"
+                ? "bg-surface-container text-primary font-semibold shadow-sm"
+                : "text-outline hover:text-on-surface"
+            }`}
+          >
+            <RiLayoutGridLine className="text-[12px]" />
+            <span>Cards</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileView("table")}
+            className={`px-2.5 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${
+              mobileView === "table"
+                ? "bg-surface-container text-primary font-semibold shadow-sm"
+                : "text-outline hover:text-on-surface"
+            }`}
+          >
+            <RiTableLine className="text-[12px]" />
+            <span>Table</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main Container */}
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-lg">
+        {/* Mobile Card Stream */}
+        <div
+          className={
+            mobileView === "cards"
+              ? "block md:hidden divide-y divide-outline-variant/30"
+              : "hidden"
+          }
+        >
+          {s.watchlist.map((saved, idx) => {
+            const x = data.find(
+              (d) =>
+                d.token.address.toLowerCase() === saved.address.toLowerCase(),
+            );
+            const currentPrice = x?.metrics?.priceUsd;
+            const change =
+              saved.addedPrice && currentPrice
+                ? ((currentPrice - saved.addedPrice) / saved.addedPrice) * 100
+                : null;
+            const priceChange24h = x?.metrics?.priceChange24h;
+            const isNegative24h = priceChange24h != null && priceChange24h < 0;
+            const isNegativeSinceAdded = change != null && change < 0;
+
+            return (
+              <div
+                key={saved.address}
+                className="p-4 hover:bg-surface-container-high/20 transition-colors flex flex-col gap-3"
+              >
+                {/* Card Header */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="text-data-mono-sm text-outline font-medium w-5 text-center shrink-0">
                       {String(idx + 1).padStart(2, "0")}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
+                    </span>
+                    <Link
+                      href={`/token/${saved.address}`}
+                      className="shrink-0 hover:opacity-80 transition-opacity"
+                    >
+                      <TokenAvatar
+                        address={saved.address}
+                        symbol={saved.symbol}
+                        size={36}
+                      />
+                    </Link>
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-1.5">
                         <Link
                           href={`/token/${saved.address}`}
-                          className="shrink-0 hover:opacity-80 transition-opacity"
+                          className="font-bold text-on-surface hover:text-primary-fixed transition-colors text-base truncate"
                         >
-                          <TokenAvatar
-                            address={saved.address}
-                            symbol={saved.symbol}
-                            size={36}
-                          />
+                          {saved.symbol}
                         </Link>
-                        <div className="flex flex-col min-w-0">
-                          <Link
-                            href={`/token/${saved.address}`}
-                            className="font-bold text-on-surface hover:text-primary-fixed transition-colors truncate"
-                          >
-                            {saved.symbol}
-                          </Link>
-                          <div className="flex items-center gap-1.5 text-data-mono-sm text-outline">
-                            <span className="truncate max-w-[120px]">
-                              {saved.name}
-                            </span>
-                            <span>·</span>
-                            <span>{shortenAddress(saved.address)}</span>
-                            <CopyButton value={saved.address} />
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-right font-data-mono-sm text-on-surface">
-                      {compactNumber(currentPrice, true)}
-                    </td>
-                    <td className="py-3 px-4 text-right font-data-mono-sm">
-                      {priceChange24h == null ? (
-                        <span className="text-outline">—</span>
-                      ) : (
-                        <span
-                          className={
-                            priceChange24h >= 0
-                              ? "text-primary-fixed"
-                              : "text-error"
-                          }
-                        >
-                          {priceChange24h > 0 ? "+" : ""}
-                          {priceChange24h.toFixed(2)}%
+                        <span className="text-outline text-xs truncate max-w-[120px]">
+                          {saved.name}
                         </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-right font-data-mono-sm text-on-surface-variant">
-                      {compactNumber(x?.metrics?.volume24hUsd, true)}
-                    </td>
-                    <td className="py-3 px-4 text-right font-data-mono-sm text-on-surface-variant">
-                      {compactNumber(x?.metrics?.liquidityUsd, true)}
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      {getRiskBadge(x?.risk.score)}
-                    </td>
-                    <td className="py-3 px-4 text-right font-data-mono-sm">
-                      {change == null ? (
-                        <span className="text-outline">—</span>
-                      ) : (
+                      </div>
+                      <div className="flex items-center gap-1.5 text-data-mono-sm text-outline">
+                        <span className="font-mono text-[11px]">
+                          {shortenAddress(saved.address)}
+                        </span>
+                        <CopyButton value={saved.address} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="shrink-0">{getRiskBadge(x?.risk?.score)}</div>
+                </div>
+
+                {/* Price & Performance Row */}
+                <div className="flex items-baseline justify-between pt-1 border-t border-outline-variant/20">
+                  <div>
+                    <span className="text-[10px] text-outline uppercase tracking-wider block font-semibold">
+                      Spot Price
+                    </span>
+                    <span className="font-data-mono-lg font-bold text-lg text-primary">
+                      {compactNumber(currentPrice, true)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <span className="text-[10px] text-outline uppercase tracking-wider block font-semibold">
+                        24H
+                      </span>
+                      <span
+                        className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold font-data-mono-sm ${
+                          priceChange24h == null
+                            ? "text-outline bg-surface-container"
+                            : isNegative24h
+                              ? "text-error bg-error/15"
+                              : "text-tertiary-fixed bg-tertiary-fixed/15"
+                        }`}
+                      >
+                        {priceChange24h == null
+                          ? "—"
+                          : `${priceChange24h > 0 ? "+" : ""}${priceChange24h.toFixed(1)}%`}
+                      </span>
+                    </div>
+                    {change != null && (
+                      <div className="text-right">
+                        <span className="text-[10px] text-outline uppercase tracking-wider block font-semibold">
+                          Since Added
+                        </span>
                         <span
-                          className={
-                            change >= 0 ? "text-primary-fixed" : "text-error"
-                          }
+                          className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold font-data-mono-sm ${
+                            isNegativeSinceAdded
+                              ? "text-error bg-error/15"
+                              : "text-tertiary-fixed bg-tertiary-fixed/15"
+                          }`}
                         >
                           {change > 0 ? "+" : ""}
-                          {change.toFixed(2)}%
+                          {change.toFixed(1)}%
                         </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {x && <CompareButton item={x} compact />}
-                        <Link
-                          href={`/token/${saved.address}`}
-                          className="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors"
-                          title="View Token Analysis"
-                          aria-label={`View ${saved.symbol} analysis`}
-                        >
-                          <RiArrowRightUpLine className="text-base" />
-                        </Link>
-                        <button
-                          type="button"
-                          className="p-1.5 rounded-lg text-outline hover:text-error hover:bg-surface-container-high transition-colors cursor-pointer"
-                          onClick={() => {
-                            if (x) {
-                              s.toggleWatch(x);
-                            } else {
-                              s.toggleWatch({
-                                token: {
-                                  ...saved,
-                                  decimals: 0,
-                                  totalSupply: "0",
-                                  chainId: 88899,
-                                  firstSeenAt: saved.addedAt,
-                                  explorerUrl: "",
-                                },
-                                metrics: null,
-                              });
-                            }
-                          }}
-                          aria-label={`Remove ${saved.symbol}`}
-                          title={`Remove ${saved.symbol} from watchlist`}
-                        >
-                          <FiTrash2 className="text-sm" />
-                        </button>
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    )}
+                  </div>
+                </div>
+
+                {/* Micro Stats Grid */}
+                <div className="grid grid-cols-2 gap-2 p-2.5 rounded-lg bg-surface-container-low/60 border border-outline-variant/30 text-data-mono-sm">
+                  <div>
+                    <span className="text-[10px] text-outline uppercase block">
+                      24H Volume
+                    </span>
+                    <span className="text-xs font-semibold text-on-surface">
+                      {compactNumber(x?.metrics?.volume24hUsd, true)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-outline uppercase block">
+                      Liquidity
+                    </span>
+                    <span className="text-xs font-semibold text-on-surface">
+                      {compactNumber(x?.metrics?.liquidityUsd, true)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Actions Row */}
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    className="px-2.5 py-1 rounded-md text-xs font-medium text-outline hover:text-error hover:bg-surface-container-high transition-colors flex items-center gap-1.5 border border-outline-variant cursor-pointer"
+                    onClick={() => {
+                      if (x) {
+                        s.toggleWatch(x);
+                      } else {
+                        s.toggleWatch({
+                          token: {
+                            ...saved,
+                            decimals: 0,
+                            totalSupply: "0",
+                            chainId: 88899,
+                            firstSeenAt: saved.addedAt,
+                            explorerUrl: "",
+                          },
+                          metrics: null,
+                        });
+                      }
+                    }}
+                  >
+                    <FiTrash2 className="text-xs" />
+                    <span>Remove</span>
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    {x && <CompareButton item={x} compact />}
+                    <Link
+                      href={`/token/${saved.address}`}
+                      className="px-2.5 py-1 rounded-md text-xs font-medium bg-surface-container-high hover:bg-surface-container text-primary hover:text-primary-fixed border border-outline-variant transition-colors flex items-center gap-1"
+                    >
+                      <span>Analysis</span>
+                      <RiArrowRightUpLine className="text-xs" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop Table & Mobile Table Mode */}
+        <div className={mobileView === "table" ? "block" : "hidden md:block"}>
+          {/* Touch Swipe Hint */}
+          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-surface-container-low/60 border-b border-outline-variant/40 text-[11px] text-outline font-data-mono-sm">
+            <span className="flex items-center gap-1.5">
+              <FiArrowRight className="text-[12px] animate-pulse text-primary-fixed" />
+              <span>Swipe horizontally to view all metrics</span>
+            </span>
+            <span>{s.watchlist.length} assets</span>
+          </div>
+
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left border-collapse min-w-[960px]">
+              <thead>
+                <tr className="border-b border-outline-variant bg-surface-container/30 text-label-caps text-outline uppercase">
+                  <th className="py-3 px-3 w-12 text-center">#</th>
+                  <th className="py-3 px-4 sticky left-0 bg-surface-container/95 backdrop-blur z-20 border-r border-outline-variant/40 shadow-[4px_0_10px_rgba(0,0,0,0.3)] min-w-[210px]">
+                    Token
+                  </th>
+                  <th className="py-3 px-4 text-right">Price</th>
+                  <th className="py-3 px-4 text-right">24H Change</th>
+                  <th className="py-3 px-4 text-right">24H Volume</th>
+                  <th className="py-3 px-4 text-right">Liquidity</th>
+                  <th className="py-3 px-4 text-center">HoodLens Risk</th>
+                  <th className="py-3 px-4 text-right">Since Added</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/40 font-body-sm">
+                {s.watchlist.map((saved, idx) => {
+                  const x = data.find(
+                    (d) =>
+                      d.token.address.toLowerCase() ===
+                      saved.address.toLowerCase(),
+                  );
+                  const currentPrice = x?.metrics?.priceUsd;
+                  const change =
+                    saved.addedPrice && currentPrice
+                      ? ((currentPrice - saved.addedPrice) / saved.addedPrice) *
+                        100
+                      : null;
+                  const priceChange24h = x?.metrics?.priceChange24h;
+
+                  return (
+                    <tr
+                      key={saved.address}
+                      className="hover:bg-surface-container-high/30 transition-colors group"
+                    >
+                      <td className="py-3 px-3 text-center text-data-mono-sm text-outline">
+                        {String(idx + 1).padStart(2, "0")}
+                      </td>
+                      {/* Sticky Token Column */}
+                      <td className="py-3 px-4 sticky left-0 bg-surface-container-lowest group-hover:bg-surface-container-high/30 transition-colors z-10 border-r border-outline-variant/40 shadow-[4px_0_10px_rgba(0,0,0,0.3)]">
+                        <div className="flex items-center gap-3">
+                          <Link
+                            href={`/token/${saved.address}`}
+                            className="shrink-0 hover:opacity-80 transition-opacity"
+                          >
+                            <TokenAvatar
+                              address={saved.address}
+                              symbol={saved.symbol}
+                              size={34}
+                            />
+                          </Link>
+                          <div className="flex flex-col min-w-0">
+                            <Link
+                              href={`/token/${saved.address}`}
+                              className="font-bold text-on-surface hover:text-primary-fixed transition-colors truncate text-[13px]"
+                            >
+                              {saved.symbol}
+                            </Link>
+                            <div className="flex items-center gap-1.5 text-data-mono-sm text-outline">
+                              <span className="truncate max-w-[110px]">
+                                {saved.name}
+                              </span>
+                              <span>·</span>
+                              <span>{shortenAddress(saved.address)}</span>
+                              <CopyButton value={saved.address} />
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-right font-data-mono-sm text-on-surface">
+                        {compactNumber(currentPrice, true)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-data-mono-sm">
+                        {priceChange24h == null ? (
+                          <span className="text-outline">—</span>
+                        ) : (
+                          <span
+                            className={
+                              priceChange24h >= 0
+                                ? "text-primary-fixed"
+                                : "text-error"
+                            }
+                          >
+                            {priceChange24h > 0 ? "+" : ""}
+                            {priceChange24h.toFixed(2)}%
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-right font-data-mono-sm text-on-surface-variant">
+                        {compactNumber(x?.metrics?.volume24hUsd, true)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-data-mono-sm text-on-surface-variant">
+                        {compactNumber(x?.metrics?.liquidityUsd, true)}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        {getRiskBadge(x?.risk.score)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-data-mono-sm">
+                        {change == null ? (
+                          <span className="text-outline">—</span>
+                        ) : (
+                          <span
+                            className={
+                              change >= 0 ? "text-primary-fixed" : "text-error"
+                            }
+                          >
+                            {change > 0 ? "+" : ""}
+                            {change.toFixed(2)}%
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {x && <CompareButton item={x} compact />}
+                          <Link
+                            href={`/token/${saved.address}`}
+                            className="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                            title="View Token Analysis"
+                            aria-label={`View ${saved.symbol} analysis`}
+                          >
+                            <RiArrowRightUpLine className="text-base" />
+                          </Link>
+                          <button
+                            type="button"
+                            className="p-1.5 rounded-lg text-outline hover:text-error hover:bg-surface-container-high transition-colors cursor-pointer"
+                            onClick={() => {
+                              if (x) {
+                                s.toggleWatch(x);
+                              } else {
+                                s.toggleWatch({
+                                  token: {
+                                    ...saved,
+                                    decimals: 0,
+                                    totalSupply: "0",
+                                    chainId: 88899,
+                                    firstSeenAt: saved.addedAt,
+                                    explorerUrl: "",
+                                  },
+                                  metrics: null,
+                                });
+                              }
+                            }}
+                            aria-label={`Remove ${saved.symbol}`}
+                            title={`Remove ${saved.symbol} from watchlist`}
+                          >
+                            <FiTrash2 className="text-sm" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

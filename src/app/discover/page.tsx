@@ -28,7 +28,7 @@ export default async function DiscoverPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex-1 w-full max-w-[1720px] mx-auto p-8 text-center text-outline">
+        <div className="flex-1 w-full max-w-[1580px] mx-auto px-margin-screen site-container p-8 text-center text-outline">
           Loading live discovery signals...
         </div>
       }

@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <main className="max-w-[1720px] mx-auto px-4 md:px-margin-screen py-space-md min-h-[calc(100vh-48px-64px)] flex flex-col gap-6 animate-pulse">
+    <main className="w-full max-w-[1580px] mx-auto px-margin-screen site-container py-space-md min-h-[calc(100vh-48px-64px)] flex flex-col gap-6 animate-pulse">
       {/* Hero Skeleton */}
       <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 h-44 flex flex-col justify-between" />
 

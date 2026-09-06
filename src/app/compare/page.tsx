@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6 min-h-[calc(100vh-48px-64px)] flex-1 flex flex-col gap-6">
+    <main className="w-full max-w-[1580px] mx-auto px-margin-screen site-container py-space-md min-h-[calc(100vh-48px-64px)] flex-1 flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm pb-space-sm border-b border-outline-variant">
         <div className="flex flex-col gap-1">

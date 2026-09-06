@@ -1,13 +1,22 @@
 "use client";
 
 import { useAppState } from "@/components/providers/AppState";
+import { CopyButton } from "@/components/shared/CopyButton";
+import { TokenAvatar } from "@/components/shared/TokenAvatar";
 import { compactNumber, shortenAddress } from "@/lib/utils/format";
 import type { RankedToken } from "@/types/token";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FiSearch } from "react-icons/fi";
-import { RiArrowRightUpLine } from "react-icons/ri";
+import { FiArrowRight, FiSearch } from "react-icons/fi";
+import {
+    RiArrowRightUpLine,
+    RiExchangeLine,
+    RiLayoutGridLine,
+    RiStarFill,
+    RiStarLine,
+    RiTableLine,
+} from "react-icons/ri";
 
 type ViewKey =
   | "trending"
@@ -138,6 +147,7 @@ export function DiscoverClient({
   const [sortField, setSortField] = useState<SortField>("rank");
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
   const [page, setPage] = useState(1);
+  const [mobileView, setMobileView] = useState<"cards" | "table">("cards");
   const [clientTime, setClientTime] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const pageSize = 10;
@@ -323,7 +333,7 @@ export function DiscoverClient({
   }
 
   return (
-    <main className="flex-1 w-full max-w-[1720px] mx-auto px-margin-screen py-space-md flex flex-col gap-space-md">
+    <main className="flex-1 w-full max-w-[1580px] mx-auto px-margin-screen site-container py-space-md flex flex-col gap-space-md">
       {/* Page Header Module */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm pb-space-xs border-b border-outline-variant">
         <div className="flex flex-col gap-0.5">
@@ -493,8 +503,36 @@ export function DiscoverClient({
           </div>
         </div>
 
-        {/* Result Counter */}
-        <div className="flex items-center gap-space-sm text-data-mono-sm font-data-mono-sm">
+        {/* Result Counter & Mobile View Switcher */}
+        <div className="flex items-center gap-2 text-data-mono-sm font-data-mono-sm">
+          {/* Mobile View Switcher */}
+          <div className="flex md:hidden items-center bg-surface-container-high/60 p-0.5 rounded-lg border border-outline-variant text-xs">
+            <button
+              type="button"
+              onClick={() => setMobileView("cards")}
+              className={`px-2.5 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${
+                mobileView === "cards"
+                  ? "bg-surface-container text-primary font-semibold shadow-sm"
+                  : "text-outline hover:text-on-surface"
+              }`}
+            >
+              <RiLayoutGridLine className="text-[12px]" />
+              <span>Cards</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileView("table")}
+              className={`px-2.5 py-1 rounded flex items-center gap-1.5 transition-colors cursor-pointer ${
+                mobileView === "table"
+                  ? "bg-surface-container text-primary font-semibold shadow-sm"
+                  : "text-outline hover:text-on-surface"
+              }`}
+            >
+              <RiTableLine className="text-[12px]" />
+              <span>Table</span>
+            </button>
+          </div>
+
           <div className="flex items-center gap-1.5 text-on-surface-variant text-data-mono-sm font-data-mono-sm">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
             <span>{filtered.length} results</span>
@@ -504,218 +542,495 @@ export function DiscoverClient({
 
       {/* Main Token Discovery Table Container */}
       <div className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col mb-16">
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="h-8 border-b border-outline-variant bg-surface-container-low/50 text-label-caps font-label-caps text-on-surface-variant tracking-wider select-none">
-                <th className="px-3 py-1 text-left font-semibold">Token</th>
-                <th
-                  onClick={() => handleSort("price")}
-                  className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
-                >
-                  Price{" "}
-                  {sortField === "price" ? (sortDir === 1 ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  onClick={() => handleSort("change")}
-                  className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
-                >
-                  24h Change{" "}
-                  {sortField === "change" ? (sortDir === 1 ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  onClick={() => handleSort("marketCap")}
-                  className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
-                >
-                  Market Cap{" "}
-                  {sortField === "marketCap" ? (sortDir === 1 ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  onClick={() => handleSort("volume")}
-                  className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
-                >
-                  24h Volume{" "}
-                  {sortField === "volume" ? (sortDir === 1 ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  onClick={() => handleSort("liquidity")}
-                  className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
-                >
-                  Available Liquidity{" "}
-                  {sortField === "liquidity" ? (sortDir === 1 ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  onClick={() => handleSort("ratio")}
-                  className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
-                >
-                  Vol / Liq{" "}
-                  {sortField === "ratio" ? (sortDir === 1 ? "↑" : "↓") : ""}
-                </th>
-                <th className="px-3 py-1 text-right font-semibold">Holders</th>
-                <th
-                  onClick={() => handleSort("risk")}
-                  className="px-3 py-1 text-center font-semibold cursor-pointer hover:text-primary"
-                >
-                  Risk Score{" "}
-                  {sortField === "risk" ? (sortDir === 1 ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  onClick={() => handleSort("age")}
-                  className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
-                >
-                  Age {sortField === "age" ? (sortDir === 1 ? "↑" : "↓") : ""}
-                </th>
-                <th className="px-3 py-1 text-center font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-surface-variant/40 text-body-md font-body-md">
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={11}
-                    className="py-16 text-center text-on-surface-variant"
-                  >
-                    <div className="inline-flex items-center space-x-2">
-                      <span className="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>
-                      <span>Querying on-chain telemetry...</span>
-                    </div>
-                  </td>
-                </tr>
-              ) : pagedTokens.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={11}
-                    className="py-16 text-center text-on-surface-variant"
-                  >
-                    <p className="text-body-md font-semibold text-primary">
-                      No tokens match active discovery criteria
-                    </p>
-                    <p className="text-body-sm text-outline mt-1.5 max-w-md mx-auto">
-                      {filterQuery || minLiquidity > 0 || minVolume > 0
-                        ? "Try clearing or relaxing liquidity, volume, or search filters."
-                        : "Analyze and index contracts via the search console to build live telemetry."}
-                    </p>
-                  </td>
-                </tr>
-              ) : (
-                pagedTokens.map((item) => {
-                  const change = item.metrics?.priceChange24h;
-                  const isNegative = change != null && change < 0;
-                  const isQueued = appState.compare.some(
-                    (x) =>
-                      x.address.toLowerCase() ===
-                      item.token.address.toLowerCase(),
-                  );
-                  const priceStr =
-                    item.metrics?.priceUsd != null
-                      ? item.metrics.priceUsd < 0.001
-                        ? `$${item.metrics.priceUsd.toFixed(6)}`
-                        : compactNumber(item.metrics.priceUsd, true)
-                      : "$0.00";
+        {loading ? (
+          <div className="py-20 text-center text-on-surface-variant">
+            <div className="inline-flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>
+              <span>Querying on-chain telemetry...</span>
+            </div>
+          </div>
+        ) : pagedTokens.length === 0 ? (
+          <div className="py-20 text-center text-on-surface-variant px-4">
+            <p className="text-body-md font-semibold text-primary">
+              No tokens match active discovery criteria
+            </p>
+            <p className="text-body-sm text-outline mt-1.5 max-w-md mx-auto">
+              {filterQuery || minLiquidity > 0 || minVolume > 0
+                ? "Try clearing or relaxing liquidity, volume, or search filters."
+                : "Analyze and index contracts via the search console to build live telemetry."}
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Mobile Card Stream (Active when mobileView === "cards") */}
+            <div
+              className={
+                mobileView === "cards"
+                  ? "block md:hidden divide-y divide-outline-variant/30"
+                  : "hidden"
+              }
+            >
+              {pagedTokens.map((item) => {
+                const change = item.metrics?.priceChange24h;
+                const isNegative = change != null && change < 0;
+                const isWatched = appState.isWatched(item.token.address);
+                const isQueued = appState.compare.some(
+                  (x) =>
+                    x.address.toLowerCase() ===
+                    item.token.address.toLowerCase(),
+                );
+                const priceStr =
+                  item.metrics?.priceUsd != null
+                    ? item.metrics.priceUsd < 0.001
+                      ? `$${item.metrics.priceUsd.toFixed(6)}`
+                      : compactNumber(item.metrics.priceUsd, true)
+                    : "$0.00";
 
-                  const symbolInitial = item.token.symbol.slice(0, 3);
-
-                  return (
-                    <tr
-                      key={item.token.address}
-                      className="hover:bg-surface-container-high transition-colors group"
-                    >
-                      <td className="px-3 py-2.5">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary-fixed font-bold text-data-mono-sm">
-                            {symbolInitial}
-                          </div>
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5">
-                              <Link
-                                href={`/token/${item.token.address}`}
-                                className="font-semibold text-primary group-hover:text-primary-fixed transition-colors"
-                              >
-                                {item.token.symbol}
-                              </Link>
-                              <span className="text-data-mono-sm font-data-mono-sm text-outline truncate max-w-[130px]">
-                                {item.token.name}
-                              </span>
-                            </div>
+                return (
+                  <div
+                    key={item.token.address}
+                    className="p-4 hover:bg-surface-container-high/20 transition-colors flex flex-col gap-3"
+                  >
+                    {/* Card Header: Avatar, Identity, Risk Badge */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Link
+                          href={`/token/${item.token.address}`}
+                          className="shrink-0"
+                        >
+                          <TokenAvatar
+                            address={item.token.address}
+                            symbol={item.token.symbol}
+                            size={38}
+                          />
+                        </Link>
+                        <div className="flex flex-col min-w-0">
+                          <div className="flex items-center gap-1.5">
                             <Link
                               href={`/token/${item.token.address}`}
-                              className="text-data-mono-sm font-data-mono-sm text-outline group-hover:text-on-surface-variant font-mono"
-                              title={item.token.address}
+                              className="font-bold text-on-surface hover:text-primary-fixed transition-colors text-base truncate"
                             >
-                              {shortenAddress(item.token.address)}
+                              {item.token.symbol}
                             </Link>
+                            <span className="text-outline text-xs truncate max-w-[120px]">
+                              {item.token.name}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-data-mono-sm text-outline">
+                            <span className="font-mono text-[11px]">
+                              {shortenAddress(item.token.address)}
+                            </span>
+                            <CopyButton value={item.token.address} />
                           </div>
                         </div>
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-primary">
-                        {priceStr}
-                      </td>
-                      <td
-                        className={`px-3 py-2.5 text-right font-data-mono-md text-data-mono-md ${
-                          isNegative ? "text-error" : "text-secondary-fixed"
-                        }`}
-                      >
-                        {change == null
-                          ? "—"
-                          : `${change > 0 ? "+" : ""}${change.toFixed(2)}%`}
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface">
-                        {compactNumber(item.metrics?.marketCapUsd ?? 0, true)}
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface">
-                        {compactNumber(item.metrics?.volume24hUsd ?? 0, true)}
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface">
-                        {compactNumber(item.metrics?.liquidityUsd ?? 0, true)}
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface-variant">
-                        {volLiqRatio(
-                          item.metrics?.volume24hUsd,
-                          item.metrics?.liquidityUsd,
-                        )}
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface">
-                        —
-                      </td>
-                      <td className="px-3 py-2.5 text-center">
+                      </div>
+                      <div className="shrink-0">
                         {getRiskBadge(item.risk?.score)}
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-data-mono-sm text-data-mono-sm text-outline">
-                        {getAgeText(item.token.firstSeenAt, clientTime)}
-                      </td>
-                      <td className="px-3 py-2.5 text-center">
-                        <div className="inline-flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => appState.toggleCompare(item)}
-                            className={`px-2 py-0.5 rounded text-data-mono-sm font-data-mono-sm cursor-pointer transition-colors ${
-                              isQueued
-                                ? "bg-surface-container-high text-primary-fixed border border-primary-fixed/30 font-medium"
-                                : "text-outline hover:text-primary-fixed border border-outline-variant hover:border-primary-fixed"
+                      </div>
+                    </div>
+
+                    {/* Price & 24h Delta Strip */}
+                    <div className="flex items-baseline justify-between pt-1 border-t border-outline-variant/20">
+                      <div>
+                        <span className="text-[10px] text-outline uppercase tracking-wider block font-semibold">
+                          Spot Price
+                        </span>
+                        <span className="font-data-mono-lg font-bold text-lg text-primary">
+                          {priceStr}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-outline uppercase tracking-wider block font-semibold">
+                          24H Change
+                        </span>
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold font-data-mono-sm ${
+                            change == null
+                              ? "text-outline bg-surface-container"
+                              : isNegative
+                                ? "text-error bg-error/15"
+                                : "text-tertiary-fixed bg-tertiary-fixed/15"
+                          }`}
+                        >
+                          {change == null
+                            ? "—"
+                            : `${change > 0 ? "+" : ""}${change.toFixed(2)}%`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 4-Metric Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 rounded-lg bg-surface-container-low/60 border border-outline-variant/30 text-data-mono-sm">
+                      <div>
+                        <span className="text-[10px] text-outline uppercase block">
+                          24H Vol
+                        </span>
+                        <span className="text-xs font-semibold text-on-surface">
+                          {compactNumber(item.metrics?.volume24hUsd ?? 0, true)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-outline uppercase block">
+                          Market Cap
+                        </span>
+                        <span className="text-xs font-semibold text-on-surface">
+                          {compactNumber(item.metrics?.marketCapUsd ?? 0, true)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-outline uppercase block">
+                          Liquidity
+                        </span>
+                        <span className="text-xs font-semibold text-on-surface">
+                          {compactNumber(item.metrics?.liquidityUsd ?? 0, true)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-outline uppercase block">
+                          Vol / Liq
+                        </span>
+                        <span className="text-xs font-semibold text-on-surface-variant">
+                          {volLiqRatio(
+                            item.metrics?.volume24hUsd,
+                            item.metrics?.liquidityUsd,
+                          )}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Row */}
+                    <div className="flex items-center justify-between pt-1 text-data-mono-sm">
+                      <span className="text-[11px] text-outline">
+                        Age: {getAgeText(item.token.firstSeenAt, clientTime)}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => appState.toggleWatch(item)}
+                          className={`px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer border ${
+                            isWatched
+                              ? "bg-surface-container-high text-primary-fixed border-primary-fixed/40 font-semibold"
+                              : "bg-surface-container-low text-outline hover:text-on-surface border-outline-variant"
+                          }`}
+                          title={
+                            isWatched
+                              ? "Remove from watchlist"
+                              : "Add to watchlist"
+                          }
+                        >
+                          {isWatched ? (
+                            <>
+                              <RiStarFill className="text-primary-fixed text-sm" />
+                              <span>Saved</span>
+                            </>
+                          ) : (
+                            <>
+                              <RiStarLine className="text-sm" />
+                              <span>Watch</span>
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => appState.toggleCompare(item)}
+                          className={`px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer border ${
+                            isQueued
+                              ? "bg-surface-container-high text-primary-fixed border-primary-fixed/40 font-semibold"
+                              : "bg-surface-container-low text-outline hover:text-on-surface border-outline-variant"
+                          }`}
+                        >
+                          <RiExchangeLine className="text-xs" />
+                          <span>{isQueued ? "Queued" : "Compare"}</span>
+                        </button>
+
+                        <Link
+                          href={`/token/${item.token.address}`}
+                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-surface-container-high hover:bg-surface-container text-primary hover:text-primary-fixed border border-outline-variant transition-colors flex items-center gap-1"
+                        >
+                          <span>View</span>
+                          <RiArrowRightUpLine className="text-xs" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table View & Mobile Table Mode */}
+            <div
+              className={mobileView === "table" ? "block" : "hidden md:block"}
+            >
+              {/* Touch Swipe Hint when in table mode on mobile */}
+              <div className="md:hidden flex items-center justify-between px-4 py-2 bg-surface-container-low/60 border-b border-outline-variant/40 text-[11px] text-outline font-data-mono-sm">
+                <span className="flex items-center gap-1.5">
+                  <FiArrowRight className="text-[12px] animate-pulse text-primary-fixed" />
+                  <span>Swipe horizontally to view all 11 metrics</span>
+                </span>
+                <span>{sorted.length} tokens</span>
+              </div>
+
+              <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left border-collapse min-w-[1080px]">
+                  <thead>
+                    <tr className="h-9 border-b border-outline-variant bg-surface-container-low/50 text-label-caps font-label-caps text-on-surface-variant tracking-wider select-none">
+                      <th className="px-3 py-1 text-left font-semibold sticky left-0 bg-surface-container-low z-20 border-r border-outline-variant/40 shadow-[4px_0_10px_rgba(0,0,0,0.3)] min-w-[210px]">
+                        Token
+                      </th>
+                      <th
+                        onClick={() => handleSort("price")}
+                        className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
+                      >
+                        Price{" "}
+                        {sortField === "price"
+                          ? sortDir === 1
+                            ? "↑"
+                            : "↓"
+                          : ""}
+                      </th>
+                      <th
+                        onClick={() => handleSort("change")}
+                        className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
+                      >
+                        24h Change{" "}
+                        {sortField === "change"
+                          ? sortDir === 1
+                            ? "↑"
+                            : "↓"
+                          : ""}
+                      </th>
+                      <th
+                        onClick={() => handleSort("marketCap")}
+                        className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
+                      >
+                        Market Cap{" "}
+                        {sortField === "marketCap"
+                          ? sortDir === 1
+                            ? "↑"
+                            : "↓"
+                          : ""}
+                      </th>
+                      <th
+                        onClick={() => handleSort("volume")}
+                        className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
+                      >
+                        24h Volume{" "}
+                        {sortField === "volume"
+                          ? sortDir === 1
+                            ? "↑"
+                            : "↓"
+                          : ""}
+                      </th>
+                      <th
+                        onClick={() => handleSort("liquidity")}
+                        className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
+                      >
+                        Available Liquidity{" "}
+                        {sortField === "liquidity"
+                          ? sortDir === 1
+                            ? "↑"
+                            : "↓"
+                          : ""}
+                      </th>
+                      <th
+                        onClick={() => handleSort("ratio")}
+                        className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
+                      >
+                        Vol / Liq{" "}
+                        {sortField === "ratio"
+                          ? sortDir === 1
+                            ? "↑"
+                            : "↓"
+                          : ""}
+                      </th>
+                      <th className="px-3 py-1 text-right font-semibold">
+                        Holders
+                      </th>
+                      <th
+                        onClick={() => handleSort("risk")}
+                        className="px-3 py-1 text-center font-semibold cursor-pointer hover:text-primary"
+                      >
+                        Risk Score{" "}
+                        {sortField === "risk"
+                          ? sortDir === 1
+                            ? "↑"
+                            : "↓"
+                          : ""}
+                      </th>
+                      <th
+                        onClick={() => handleSort("age")}
+                        className="px-3 py-1 text-right font-semibold cursor-pointer hover:text-primary"
+                      >
+                        Age{" "}
+                        {sortField === "age" ? (sortDir === 1 ? "↑" : "↓") : ""}
+                      </th>
+                      <th className="px-3 py-1 text-center font-semibold">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-variant/40 text-body-md font-body-md">
+                    {pagedTokens.map((item) => {
+                      const change = item.metrics?.priceChange24h;
+                      const isNegative = change != null && change < 0;
+                      const isWatched = appState.isWatched(item.token.address);
+                      const isQueued = appState.compare.some(
+                        (x) =>
+                          x.address.toLowerCase() ===
+                          item.token.address.toLowerCase(),
+                      );
+                      const priceStr =
+                        item.metrics?.priceUsd != null
+                          ? item.metrics.priceUsd < 0.001
+                            ? `$${item.metrics.priceUsd.toFixed(6)}`
+                            : compactNumber(item.metrics.priceUsd, true)
+                          : "$0.00";
+
+                      return (
+                        <tr
+                          key={item.token.address}
+                          className="hover:bg-surface-container-high transition-colors group"
+                        >
+                          {/* Sticky Token Column */}
+                          <td className="px-3 py-2.5 sticky left-0 bg-surface-container-lowest group-hover:bg-surface-container-high transition-colors z-10 border-r border-outline-variant/40 shadow-[4px_0_10px_rgba(0,0,0,0.3)]">
+                            <div className="flex items-center gap-2.5">
+                              <Link
+                                href={`/token/${item.token.address}`}
+                                className="shrink-0"
+                              >
+                                <TokenAvatar
+                                  address={item.token.address}
+                                  symbol={item.token.symbol}
+                                  size={30}
+                                />
+                              </Link>
+                              <div className="flex flex-col min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <Link
+                                    href={`/token/${item.token.address}`}
+                                    className="font-semibold text-primary group-hover:text-primary-fixed transition-colors text-[13px] truncate"
+                                  >
+                                    {item.token.symbol}
+                                  </Link>
+                                  <span className="text-data-mono-sm font-data-mono-sm text-outline truncate max-w-[110px]">
+                                    {item.token.name}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Link
+                                    href={`/token/${item.token.address}`}
+                                    className="text-data-mono-sm font-data-mono-sm text-outline group-hover:text-on-surface-variant font-mono text-[11px]"
+                                    title={item.token.address}
+                                  >
+                                    {shortenAddress(item.token.address)}
+                                  </Link>
+                                  <CopyButton value={item.token.address} />
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-primary">
+                            {priceStr}
+                          </td>
+                          <td
+                            className={`px-3 py-2.5 text-right font-data-mono-md text-data-mono-md ${
+                              isNegative ? "text-error" : "text-secondary-fixed"
                             }`}
                           >
-                            {isQueued ? "Queued" : "Compare"}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              router.push(`/token/${item.token.address}`)
-                            }
-                            className="p-1 rounded text-outline hover:text-primary hover:bg-surface-container cursor-pointer transition-colors"
-                            title="Open Token Intelligence"
-                            aria-label="Open Token Intelligence"
-                          >
-                            <RiArrowRightUpLine className="text-[15px]" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                            {change == null
+                              ? "—"
+                              : `${change > 0 ? "+" : ""}${change.toFixed(2)}%`}
+                          </td>
+                          <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface">
+                            {compactNumber(
+                              item.metrics?.marketCapUsd ?? 0,
+                              true,
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface">
+                            {compactNumber(
+                              item.metrics?.volume24hUsd ?? 0,
+                              true,
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface">
+                            {compactNumber(
+                              item.metrics?.liquidityUsd ?? 0,
+                              true,
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface-variant">
+                            {volLiqRatio(
+                              item.metrics?.volume24hUsd,
+                              item.metrics?.liquidityUsd,
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5 text-right font-data-mono-md text-data-mono-md text-on-surface">
+                            —
+                          </td>
+                          <td className="px-3 py-2.5 text-center">
+                            {getRiskBadge(item.risk?.score)}
+                          </td>
+                          <td className="px-3 py-2.5 text-right font-data-mono-sm text-data-mono-sm text-outline">
+                            {getAgeText(item.token.firstSeenAt, clientTime)}
+                          </td>
+                          <td className="px-3 py-2.5 text-center">
+                            <div className="inline-flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => appState.toggleWatch(item)}
+                                className={`p-1 transition-colors cursor-pointer ${
+                                  isWatched
+                                    ? "text-primary-fixed"
+                                    : "hover:text-primary-fixed text-outline"
+                                }`}
+                                title={
+                                  isWatched
+                                    ? "Remove from watchlist"
+                                    : "Add to watchlist"
+                                }
+                              >
+                                {isWatched ? (
+                                  <RiStarFill className="text-primary-fixed text-[14px]" />
+                                ) : (
+                                  <RiStarLine className="text-[14px]" />
+                                )}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => appState.toggleCompare(item)}
+                                className={`px-2 py-0.5 rounded text-data-mono-sm font-data-mono-sm cursor-pointer transition-colors ${
+                                  isQueued
+                                    ? "bg-surface-container-high text-primary-fixed border border-primary-fixed/30 font-medium"
+                                    : "text-outline hover:text-primary-fixed border border-outline-variant hover:border-primary-fixed"
+                                }`}
+                              >
+                                {isQueued ? "Queued" : "Compare"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  router.push(`/token/${item.token.address}`)
+                                }
+                                className="p-1 rounded text-outline hover:text-primary hover:bg-surface-container cursor-pointer transition-colors"
+                                title="Open Token Intelligence"
+                                aria-label="Open Token Intelligence"
+                              >
+                                <RiArrowRightUpLine className="text-[15px]" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Pagination & Grid Info */}
         <div className="px-3 py-2 bg-surface-container-low/40 border-t border-outline-variant flex flex-wrap items-center justify-between gap-space-xs text-data-mono-sm font-data-mono-sm text-on-surface-variant">

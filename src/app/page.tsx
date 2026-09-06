@@ -44,7 +44,7 @@ export default async function Home() {
   const topMoving = trending.slice(0, 3);
 
   return (
-    <main className="flex-grow w-full max-w-[1580px] mx-auto px-margin-screen pt-space-lg pb-space-3xl subtle-radial">
+    <main className="flex-grow w-full max-w-[1580px] mx-auto px-margin-screen site-container pt-space-lg pb-space-3xl subtle-radial">
       {/* HERO & DESK SECTION */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-gutter-terminal mb-space-lg">
         {/* Left Hero Canvas (7 cols) */}

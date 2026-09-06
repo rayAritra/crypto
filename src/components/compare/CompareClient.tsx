@@ -638,10 +638,21 @@ export function CompareClient() {
 
       {/* Full-width Widescreen Table */}
       <div className="w-full bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-2xl">
+        {/* Mobile Swipe Hint */}
+        <div className="md:hidden flex items-center justify-between px-4 py-2.5 bg-surface-container-low/60 border-b border-outline-variant/40 text-[11px] text-outline font-data-mono-sm">
+          <span className="flex items-center gap-1.5">
+            <FiArrowRight className="text-[12px] animate-pulse text-primary-fixed" />
+            <span>Swipe horizontally to compare {data.length} tokens</span>
+          </span>
+          <span className="text-primary-fixed font-medium">
+            Parameters pinned
+          </span>
+        </div>
+
         <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full table-fixed text-left border-collapse min-w-[800px]">
+          <table className="w-full table-fixed text-left border-collapse min-w-[750px] sm:min-w-[800px]">
             <colgroup>
-              <col className="w-64 sm:w-72 lg:w-80" />
+              <col className="w-56 sm:w-72 lg:w-80" />
               {data.map((x) => (
                 <col key={x.token.address} />
               ))}
@@ -650,7 +661,7 @@ export function CompareClient() {
             {/* Table Header: Token Cards */}
             <thead>
               <tr className="border-b border-outline-variant bg-surface-container/30">
-                <th className="py-5 px-6 text-label-caps text-outline uppercase font-semibold align-top">
+                <th className="py-5 px-4 sm:px-6 text-label-caps text-outline uppercase font-semibold align-top sticky left-0 bg-surface-container/95 backdrop-blur z-20 border-r border-outline-variant/40 shadow-[4px_0_10px_rgba(0,0,0,0.3)]">
                   Metric / Parameter
                 </th>
                 {data.map((x) => (
@@ -791,7 +802,7 @@ function MetricGroup({
       <tr className="bg-surface-container-low/70 border-y border-outline-variant/40">
         <td
           colSpan={data.length + 1 + (hasAddSlot ? 1 : 0)}
-          className="py-3 px-6 text-label-caps uppercase text-primary-fixed font-bold tracking-wider"
+          className="py-3 px-4 sm:px-6 text-label-caps uppercase text-primary-fixed font-bold tracking-wider"
         >
           {category}
         </td>
@@ -799,21 +810,21 @@ function MetricGroup({
       {metrics.map((row) => (
         <tr
           key={row.label}
-          className="hover:bg-surface-container-high/30 transition-colors border-b border-outline-variant/20"
+          className="hover:bg-surface-container-high/30 transition-colors border-b border-outline-variant/20 group"
         >
-          <td className="py-4 px-6 text-body-sm font-sans font-medium text-on-surface-variant">
+          <td className="py-4 px-4 sm:px-6 text-body-sm font-sans font-medium text-on-surface-variant sticky left-0 bg-surface-container-lowest group-hover:bg-surface-container-high/20 transition-colors z-10 border-r border-outline-variant/40 shadow-[4px_0_10px_rgba(0,0,0,0.3)]">
             {row.label}
           </td>
           {data.map((x) => (
             <td
               key={x.token.address}
-              className="py-4 px-6 text-on-surface font-mono text-base border-l border-outline-variant/20"
+              className="py-4 px-4 sm:px-6 text-on-surface font-mono text-sm sm:text-base border-l border-outline-variant/20"
             >
               {row.format(x)}
             </td>
           ))}
           {hasAddSlot && (
-            <td className="py-4 px-6 border-l border-dashed border-outline-variant/30 text-outline text-center text-sm">
+            <td className="py-4 px-4 sm:px-6 border-l border-dashed border-outline-variant/30 text-outline text-center text-sm">
               —
             </td>
           )}

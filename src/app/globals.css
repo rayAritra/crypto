@@ -380,3 +380,22 @@
   color: #e2e3de;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 }
+
+/* Site-wide Fixed Width Container (matches Navbar and Home page) */
+@utility site-container {
+  width: 100%;
+  max-width: 1580px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-margin-screen, 12px);
+  padding-right: var(--spacing-margin-screen, 12px);
+}
+
+.site-container {
+  width: 100%;
+  max-width: 1580px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-margin-screen, 12px);
+  padding-right: var(--spacing-margin-screen, 12px);
+}
