@@ -209,27 +209,15 @@ export function LandingHero() {
     TIMEFRAMES.find((t) => t.id === activeTimeframe) || TIMEFRAMES[2];
 
   return (
-    <section className="relative w-full pt-20 sm:pt-24 pb-8 sm:pb-12 px-margin-screen overflow-visible selection:bg-[#c7ff5b] selection:text-[#080a08]">
+    <section className="relative w-full pt-40 sm:pt-48 pb-8 sm:pb-12 px-margin-screen overflow-visible selection:bg-[#c7ff5b] selection:text-[#080a08]">
       {/* Background Micro-Grid & Top Ambient Spotlight */}
       <div className="absolute inset-0 bg-micro-grid pointer-events-none opacity-40 z-0" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[560px] hero-spotlight pointer-events-none z-0" />
 
       {/* 1. HERO TEXT & INTRO CLUSTER (Static Layout) */}
       <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10">
-        {/* Eyebrow Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low border border-outline-variant text-on-surface-variant mb-5 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-primary-fixed pulse-dot" />
-          <span className="text-label-caps font-label-caps tracking-widest uppercase text-primary-fixed">
-            INTRODUCING HOODLENS
-          </span>
-          <span className="text-outline">/</span>
-          <span className="text-body-sm font-body-sm text-on-surface">
-            Robinhood Chain Intelligence
-          </span>
-        </div>
-
         {/* Hero Headline */}
-        <h1 className="text-headline-xl sm:text-4xl md:text-[56px] md:leading-[62px] font-headline-xl font-bold tracking-tight text-primary max-w-4xl mb-5">
+        <h1 className="text-[24px] min-[380px]:text-[28px] sm:text-[32px] md:text-4xl lg:text-5xl xl:text-6xl leading-[1.16] min-[380px]:leading-[1.12] sm:leading-[1.08] md:leading-[1.06] lg:leading-[1.04] font-extrabold tracking-tight text-primary max-w-5xl mb-4 sm:mb-6 px-2 sm:px-0">
           The clarity standard for <br className="hidden sm:inline" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-on-surface to-primary-fixed">
             on-chain intelligence.
@@ -237,28 +225,28 @@ export function LandingHero() {
         </h1>
 
         {/* Hero Subtitle */}
-        <p className="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mb-7 leading-relaxed">
+        <p className="text-sm sm:text-base md:text-lg text-on-surface-variant max-w-2xl sm:max-w-3xl mb-7 sm:mb-8 leading-relaxed px-2 sm:px-0">
           Institutional-grade contract telemetry, unmanipulated DEX liquidity,
           deterministic 100-point risk verification, and real-time wallet
           forensics. Built natively for Robinhood Chain.
         </p>
 
         {/* CTA Button Cluster */}
-        <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10 sm:mb-12">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-3.5 mb-10 sm:mb-12 w-full sm:w-auto px-4 sm:px-0">
           <Link
             href="/terminal"
-            className="px-6 py-3 rounded-xl bg-primary-container hover:bg-secondary-fixed text-on-primary-fixed font-headline-sm text-headline-sm font-bold flex items-center gap-2 transition-all glow-lime active:scale-[0.98] shadow-lg cursor-pointer"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-primary-container hover:bg-secondary-fixed text-on-primary-fixed font-headline-sm font-bold flex items-center justify-center gap-2 transition-all glow-lime active:scale-[0.98] shadow-lg cursor-pointer text-center"
           >
-            <FiTerminal className="text-[18px]" />
+            <FiTerminal className="text-[18px] shrink-0" />
             <span>Launch HoodLens Terminal</span>
           </Link>
 
           <button
             type="button"
             onClick={triggerSearch}
-            className="px-5 py-3 rounded-xl glass-panel text-on-surface hover:text-primary hover:border-outline transition-all flex items-center gap-2.5 font-headline-sm text-headline-sm cursor-pointer"
+            className="w-full sm:w-auto px-5 py-3.5 rounded-xl glass-panel text-on-surface hover:text-primary hover:border-outline transition-all flex items-center justify-center gap-2.5 font-headline-sm cursor-pointer text-center"
           >
-            <FiSearch className="text-sm text-primary-fixed" />
+            <FiSearch className="text-sm text-primary-fixed shrink-0" />
             <span>Explore Live Signals</span>
             <span className="px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant text-data-mono-sm font-data-mono-sm text-primary-fixed">
               ⌘K
