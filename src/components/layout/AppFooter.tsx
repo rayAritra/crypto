@@ -28,26 +28,6 @@ export function AppFooter() {
             <span className="w-1.5 h-1.5 rounded-full bg-tertiary-fixed animate-pulse"></span>
             <span>Blockscout RPC Sync: Active</span>
           </div>
-          <a
-            className="text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed dark:hover:text-primary-fixed transition-colors duration-150"
-            href="/terminal"
-          >
-            Terminal
-          </a>
-          <a
-            className="text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed dark:hover:text-primary-fixed transition-colors duration-150"
-            href="/discover"
-          >
-            Discover
-          </a>
-          <a
-            className="text-on-surface-variant dark:text-on-surface-variant hover:text-primary-fixed dark:hover:text-primary-fixed transition-colors duration-150"
-            href="/api/health"
-            target="_blank"
-            rel="noreferrer"
-          >
-            API Telemetry
-          </a>
         </div>
       </div>
     </footer>

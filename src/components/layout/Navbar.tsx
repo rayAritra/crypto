@@ -12,8 +12,6 @@ import { CommandPalette } from "./CommandPalette";
 const links = [
   { href: "/terminal", label: "Terminal" },
   { href: "/discover", label: "Discover" },
-  { href: "/discover?view=trending", label: "Trending" },
-  { href: "/discover?view=new", label: "New Tokens" },
   { href: "/watchlist", label: "Watchlist" },
   { href: "/compare", label: "Compare" },
 ];

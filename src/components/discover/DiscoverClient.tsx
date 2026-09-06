@@ -333,16 +333,16 @@ export function DiscoverClient({
   }
 
   return (
-    <main className="flex-1 w-full max-w-[1580px] mx-auto px-margin-screen site-container py-space-md flex flex-col gap-space-md">
+    <main className="flex-1 w-full max-w-[1580px] mx-auto px-margin-screen site-container pt-8 sm:pt-10 pb-12 flex flex-col gap-6">
       {/* Page Header Module */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm pb-space-xs border-b border-outline-variant">
-        <div className="flex flex-col gap-0.5">
-          <h1 className="text-headline-lg font-headline-lg text-primary tracking-tight">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-headline font-bold text-primary tracking-tight">
             Discover
           </h1>
-          <p className="text-body-sm font-body-sm text-on-surface-variant">
-            Notable activity, liquidity shifts, and contract telemetry on
-            Robinhood Chain.
+          <p className="text-body-sm sm:text-body-md text-on-surface-variant max-w-2xl">
+            Notable activity, liquidity shifts, and contract telemetry across
+            Robinhood Chain tokens.
           </p>
         </div>
         <div className="flex items-center gap-space-lg text-data-mono-sm font-data-mono-sm text-on-surface-variant py-1">
