@@ -1,6 +1,6 @@
 import "server-only";
 import { getAddress, type Address } from "viem";
-import { rpcClient } from "./client";import { erc20Abi } from "./erc20";import { getEnv } from "@/config/env";import { cachedToken, persistToken } from "@/lib/db/queries";import { GeckoTerminalProvider } from "@/lib/market/provider";import { BlockscoutProvider } from "./indexer";import { calculateRisk } from "@/lib/analytics/risk";import type { TokenAnalytics } from "@/types/token";
+import { rpcClient } from "./client";import { erc20Abi } from "./erc20";import { getEnv } from "@/config/env";import { cachedToken, metricHistory, persistToken } from "@/lib/db/queries";import { GeckoTerminalProvider } from "@/lib/market/provider";import { BlockscoutProvider } from "./indexer";import { calculateRisk } from "@/lib/analytics/risk";import type { TokenAnalytics } from "@/types/token";
 
 export class TokenService {
   async get(address: string): Promise<TokenAnalytics> {
@@ -24,9 +24,10 @@ export class TokenService {
       new GeckoTerminalProvider().getTokenMarketData(normalized), indexer.holderData(normalized, token.totalSupply), indexer.transfers(normalized, null).catch(error => { console.error(JSON.stringify({ event: "indexer_error", provider: "blockscout", operation: "transfers", message: error instanceof Error ? error.message : "unknown" })); return { items: [], nextCursor: null }; }),
     ]);
     const risk = calculateRisk(token, market.metrics, holderData.summary);
+    const storedPriceHistory = market.priceHistory.length ? [] : await metricHistory(normalized, env.ROBINHOOD_CHAIN_ID);
     await persistToken(token, market.metrics, risk);
     console.info(JSON.stringify({ event: "token_lookup", address: normalized, latencyMs: Date.now() - started }));
-    return { token, metrics: market.metrics, holderSummary: holderData.summary, holders: holderData.holders, pools: market.pools, priceHistory: market.priceHistory, risk, transactions: transferPage.items.slice(0, 20), lastUpdated: new Date().toISOString() };
+    return { token, metrics: market.metrics, holderSummary: holderData.summary, holders: holderData.holders, pools: market.pools, priceHistory: market.priceHistory.length ? market.priceHistory : storedPriceHistory, risk, transactions: transferPage.items.slice(0, 20), lastUpdated: new Date().toISOString() };
   }
 }
 export class ServiceError extends Error { constructor(public code: string, message: string, public status: number) { super(message); } }

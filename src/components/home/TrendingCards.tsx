@@ -1,2 +1,29 @@
-import Link from "next/link";import type {RankedToken} from "@/types/token";import {compactNumber} from "@/lib/utils/format";import {TokenAvatar} from "@/components/shared/TokenAvatar";
-export function TrendingCards({tokens}:{tokens:RankedToken[]}){if(!tokens.length)return <div className="panel empty"><span>Trending cards will appear as indexed activity becomes available.</span></div>;return <div className="trend-grid">{tokens.slice(0,3).map((x,i)=><Link href={`/token/${x.token.address}`} className="trend-card panel" key={x.token.address}><div className="trend-top"><TokenAvatar address={x.token.address} symbol={x.token.symbol}/><span><strong>{x.token.symbol}</strong><small>{x.token.name}</small></span><em>#{i+1}</em></div><div className="trend-price"><strong>{compactNumber(x.metrics?.priceUsd,true)}</strong><span className={(x.metrics?.priceChange24h??0)<0?"negative":"positive"}>{x.metrics?.priceChange24h==null?"—":`${x.metrics.priceChange24h>0?"+":""}${x.metrics.priceChange24h.toFixed(2)}%`}</span></div><div className="mini-bars" aria-hidden="true">{[4,7,5,10,8,12,9,14,13,17,15,20].map((n,j)=><i key={j} style={{height:`${n}px`}}/>)}</div><dl><div><dt>Volume</dt><dd>{compactNumber(x.metrics?.volume24hUsd,true)}</dd></div><div><dt>Liquidity</dt><dd>{compactNumber(x.metrics?.liquidityUsd,true)}</dd></div><div><dt>Risk</dt><dd>{x.risk?.score??"—"}/100</dd></div></dl></Link>)}</div>}
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import type { RankedToken } from "@/types/token";
+import { compactNumber } from "@/lib/utils/format";
+import { TokenAvatar } from "@/components/shared/TokenAvatar";
+
+export function TrendingCards({ tokens }: { tokens: RankedToken[] }) {
+  if (!tokens.length) return <div className="panel empty"><span>Trending cards will appear as indexed activity becomes available.</span></div>;
+  return <div className="trend-grid">{tokens.slice(0, 3).map((item, index) => {
+    const change = item.metrics?.priceChange24h;
+    return <Link href={`/token/${item.token.address}`} className="trend-card panel" key={item.token.address}>
+      <div className="trend-top">
+        <TokenAvatar address={item.token.address} symbol={item.token.symbol}/>
+        <span><strong>{item.token.symbol}</strong><small>{item.token.name}</small></span>
+        <em>0{index + 1}</em>
+      </div>
+      <div className="trend-price">
+        <span><small>Current price</small><strong>{compactNumber(item.metrics?.priceUsd, true)}</strong></span>
+        <b className={change != null && change < 0 ? "negative" : "positive"}>{change == null ? "—" : `${change > 0 ? "+" : ""}${change.toFixed(2)}%`}</b>
+      </div>
+      <dl>
+        <div><dt>24h volume</dt><dd>{compactNumber(item.metrics?.volume24hUsd, true)}</dd></div>
+        <div><dt>Liquidity</dt><dd>{compactNumber(item.metrics?.liquidityUsd, true)}</dd></div>
+        <div><dt>Risk score</dt><dd>{item.risk?.score ?? "—"}<small>/100</small></dd></div>
+      </dl>
+      <span className="trend-open" aria-hidden="true"><ArrowUpRight size={17}/></span>
+    </Link>;
+  })}</div>;
+}
