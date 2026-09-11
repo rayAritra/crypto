@@ -50,6 +50,14 @@ export const metadata: Metadata = {
     siteName: "HoodLens",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -57,6 +65,7 @@ export const metadata: Metadata = {
     description:
       "Real-time contract telemetry, zero-speculation risk scoring, multi-token benchmark matrix, and privacy-first watchlists for Robinhood Chain.",
     creator: "@hoodlens",
+    images: ["/opengraph-image.png"],
   },
   robots: {
     index: true,

@@ -1,5 +1,6 @@
 "use client";
 
+import { Logo } from "@/components/shared/Logo";
 import { usePathname } from "next/navigation";
 
 export function AppFooter() {
@@ -14,9 +15,7 @@ export function AppFooter() {
     <footer className="bg-surface-container-lowest dark:bg-surface-container-lowest docked full-width bottom border-t border-outline-variant dark:border-outline-variant flat no shadows mt-auto">
       <div className="flex flex-col md:flex-row justify-between items-center w-full max-w-[1360px] mx-auto site-container py-space-md text-body-sm font-body-sm">
         <div className="flex flex-col sm:flex-row items-center sm:space-x-3 mb-2 md:mb-0">
-          <span className="text-headline-sm font-headline-sm font-semibold text-primary dark:text-primary">
-            HoodLens
-          </span>
+          <Logo variant="white" size="sm" showBadge={false} />
           <span className="hidden sm:inline text-outline">•</span>
           <span className="text-on-surface-variant text-center sm:text-left text-body-sm">
             HoodLens © 2025. Institutional On-Chain Intelligence for Robinhood

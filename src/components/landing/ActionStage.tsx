@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { FiArrowRight, FiBarChart2, FiTerminal } from "react-icons/fi";
-import { RiRadarLine } from "react-icons/ri";
 
 export function ActionStage() {
   return (
@@ -43,8 +43,14 @@ export function ActionStage() {
             href="/discover"
             className="glass-card glass-card-hover rounded-2xl p-6 border border-white/10 flex flex-col justify-between corner-bracket cursor-pointer group transition-all"
           >
-            <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-white/20 transition-all">
-              <RiRadarLine className="text-xl group-hover:text-[#c7ff5b] transition-colors" />
+            <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-white/20 transition-all p-2">
+              <Image
+                src="/logo/hoodlens-mark-cyan.png"
+                alt="Discover"
+                width={24}
+                height={24}
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <h3 className="text-base font-bold text-white mb-1 group-hover:text-[#c7ff5b] transition-colors flex items-center justify-between">

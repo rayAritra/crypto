@@ -7,6 +7,7 @@ import { discovery } from "@/lib/db/queries";
 import { compactNumber } from "@/lib/utils/format";
 import type { RankedToken } from "@/types/token";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const revalidate = 60;
@@ -71,7 +72,18 @@ export default async function TerminalPage() {
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-gutter-terminal mb-space-lg">
         {/* Left Hero Canvas (7 cols) */}
         <div className="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-xl p-space-lg flex flex-col justify-between relative overflow-hidden">
-          <div className="space-y-3">
+          {/* Subtle Institutional Watermark */}
+          <div className="absolute -right-10 -bottom-10 w-60 h-60 opacity-[0.03] pointer-events-none select-none">
+            <Image
+              src="/logo/hoodlens-mark-white.png"
+              alt=""
+              width={240}
+              height={240}
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          <div className="space-y-3 relative z-10">
             {/* Eyebrow Pill */}
             <div className="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-surface-container-high border border-outline-variant">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-ping"></span>

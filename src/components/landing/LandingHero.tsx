@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { FiArrowRight, FiSearch } from "react-icons/fi";
@@ -201,8 +202,8 @@ export function LandingHero() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const centerX = width / 2;
 
-      // Elevated slightly above midpoint (46%) to provide clean bottom spacing
-      const centerY = height * 0.46;
+      // Shifted slightly downwards to align behind hero content and search console
+      const centerY = height * 0.52;
 
       currentMouseX += (targetMouseX - currentMouseX) * 0.04;
       currentMouseY += (targetMouseY - currentMouseY) * 0.04;
@@ -216,9 +217,9 @@ export function LandingHero() {
       const cosX = Math.cos(finalAngleX);
       const sinX = Math.sin(finalAngleX);
 
-      // Sizing: ~80% of screen height bounded smoothly with clean bottom clearance
-      const maxAllowedRadiusByHeight = height * 0.38;
-      const maxAllowedRadiusByWidth = width * 0.44;
+      // Sizing: slightly enlarged bounds for more immersive prominence
+      const maxAllowedRadiusByHeight = height * 0.43;
+      const maxAllowedRadiusByWidth = width * 0.49;
       const baseRadius = Math.min(
         maxAllowedRadiusByWidth,
         maxAllowedRadiusByHeight,
@@ -326,13 +327,27 @@ export function LandingHero() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle at 50% 46%, transparent 25%, rgba(8, 10, 8, 0.45) 60%, #080a08 95%)",
+              "radial-gradient(circle at 50% 52%, transparent 30%, rgba(8, 10, 8, 0.45) 65%, #080a08 95%)",
           }}
         />
       </div>
 
       {/* HERO TEXT & INTRO CLUSTER (Vertically centered with top and bottom breathing room) */}
       <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10 my-auto py-4">
+        {/* Eyebrow Brand Badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/80 border border-outline-variant/80 backdrop-blur-md mb-4 shadow-sm">
+          <Image
+            src="/logo/hoodlens-mark-cyan.png"
+            alt="HoodLens Radar"
+            width={16}
+            height={16}
+            className="w-4 h-4 object-contain animate-pulse select-none"
+          />
+          <span className="text-[11px] font-data-mono-sm font-semibold tracking-wider text-primary-fixed uppercase">
+            Robinhood Chain Telemetry
+          </span>
+        </div>
+
         {/* Hero Headline - Styled with HTML Impact Typography & Brand Green Accent */}
         <h1 className="text-[28px] min-[380px]:text-[28px] sm:text-[34px] md:text-[42px] lg:text-[60px] leading-[0.95] font-headline-xl font-extrabold tracking-[-0.04em] text-white uppercase max-w-5xl mb-4 select-none drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)] px-2 sm:px-0">
           THE CLARITY STANDARD FOR <br className="hidden sm:inline" />
@@ -379,11 +394,18 @@ export function LandingHero() {
             href="/terminal"
             className="w-full sm:w-auto inline-flex items-stretch rounded-xl overflow-hidden shadow-2xl transition-transform active:scale-[0.98] group cursor-pointer border border-primary-fixed/30 hover:border-primary-fixed glow-lime"
           >
-            <div className="bg-primary-fixed group-hover:bg-[#d8ff85] text-[#080a08] px-4 py-3.5 flex items-center justify-center transition-colors shrink-0">
-              <FiArrowRight className="text-[18px]" />
+            <div className="bg-primary-fixed group-hover:bg-[#d8ff85] text-[#080a08] px-3.5 py-3.5 flex items-center justify-center transition-colors shrink-0">
+              <Image
+                src="/logo/hoodlens-mark-black.png"
+                alt="HoodLens"
+                width={18}
+                height={18}
+                className="w-4.5 h-4.5 object-contain select-none"
+              />
             </div>
-            <div className="bg-white group-hover:bg-[#f2f2f2] text-black font-data-mono-sm font-bold text-[12px] sm:text-[13px] tracking-wider uppercase px-5 py-3.5 flex items-center justify-center flex-1 transition-colors whitespace-nowrap">
-              LAUNCH COMPUTE TERMINAL
+            <div className="bg-white group-hover:bg-[#f2f2f2] text-black font-data-mono-sm font-bold text-[12px] sm:text-[13px] tracking-wider uppercase px-5 py-3.5 flex items-center justify-center gap-2 flex-1 transition-colors whitespace-nowrap">
+              <span>LAUNCH COMPUTE TERMINAL</span>
+              <FiArrowRight className="text-[14px] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
 

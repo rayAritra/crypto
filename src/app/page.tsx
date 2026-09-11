@@ -21,12 +21,21 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "HoodLens",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
     description:
       "Institutional clarity for Robinhood Chain. Real-time contract telemetry, deterministic risk forensics, and multi-token benchmarks.",
+    images: ["/opengraph-image.png"],
   },
 };
 

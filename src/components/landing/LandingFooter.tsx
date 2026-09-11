@@ -1,11 +1,12 @@
+import { Logo } from "@/components/shared/Logo";
 import Link from "next/link";
 
 export function LandingFooter() {
   return (
     <footer className="border-t border-white/[0.06] py-10 px-4 sm:px-6 text-xs font-mono text-on-surface-variant relative z-10 bg-[#080a08]/90 backdrop-blur-md w-full">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5">
-        <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-          <span className="text-white font-bold tracking-tight">HoodLens</span>
+        <div className="flex flex-col sm:flex-row items-center gap-2.5 text-center sm:text-left">
+          <Logo variant="white" size="xs" showBadge={false} />
           <span className="hidden sm:inline text-outline">•</span>
           <span>Institutional On-Chain Intelligence for Robinhood Chain.</span>
         </div>

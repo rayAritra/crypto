@@ -3,6 +3,7 @@
 import { useAppState } from "@/components/providers/AppState";
 import { shortenAddress } from "@/lib/utils/format";
 import type { RankedToken } from "@/types/token";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -214,7 +215,16 @@ export function CommandPalette({
             <span>↑↓ navigate</span>
             <span>↵ open</span>
           </div>
-          <span>Robinhood Chain L2</span>
+          <div className="flex items-center gap-1.5">
+            <Image
+              src="/logo/hoodlens-mark-white.png"
+              alt=""
+              width={13}
+              height={13}
+              className="opacity-70 select-none"
+            />
+            <span>Robinhood Chain L2</span>
+          </div>
         </div>
       </div>
     </div>
