@@ -601,6 +601,7 @@ export function DiscoverClient({
                           <TokenAvatar
                             address={item.token.address}
                             symbol={item.token.symbol}
+                            iconUrl={item.token.iconUrl}
                             size={38}
                           />
                         </Link>
@@ -902,6 +903,7 @@ export function DiscoverClient({
                                 <TokenAvatar
                                   address={item.token.address}
                                   symbol={item.token.symbol}
+                                  iconUrl={item.token.iconUrl}
                                   size={30}
                                 />
                               </Link>

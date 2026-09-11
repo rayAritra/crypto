@@ -1,18 +1,13 @@
 "use client";
 
 import { useAppState } from "@/components/providers/AppState";
+import { TokenAvatar } from "@/components/shared/TokenAvatar";
 import { shortenAddress } from "@/lib/utils/format";
 import type { RankedToken } from "@/types/token";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-    FiArrowRight,
-    FiClock,
-    FiSearch,
-    FiTrendingUp,
-    FiZap,
-} from "react-icons/fi";
+import { FiArrowRight, FiSearch, FiTrendingUp, FiZap } from "react-icons/fi";
 import { RiArrowLeftRightLine, RiStarLine } from "react-icons/ri";
 import { getAddress, isAddress } from "viem";
 
@@ -83,7 +78,14 @@ export function CommandPalette({
         label: `${x.token.symbol} · ${x.token.name}`,
         detail: shortenAddress(x.token.address),
         href: `/token/${x.token.address}`,
-        icon: <FiSearch className="text-outline text-base" />,
+        icon: (
+          <TokenAvatar
+            address={x.token.address}
+            symbol={x.token.symbol}
+            iconUrl={x.token.iconUrl}
+            size={22}
+          />
+        ),
       }));
     }
     return [
@@ -91,7 +93,7 @@ export function CommandPalette({
         label: x.symbol,
         detail: `Recently viewed · ${x.name}`,
         href: `/token/${x.address}`,
-        icon: <FiClock className="text-secondary-fixed text-base" />,
+        icon: <TokenAvatar address={x.address} symbol={x.symbol} size={22} />,
       })),
       {
         label: "View Trending",

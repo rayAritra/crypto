@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppState } from "@/components/providers/AppState";
+import { TokenAvatar } from "@/components/shared/TokenAvatar";
 import { compactNumber } from "@/lib/utils/format";
 import { useRouter } from "next/navigation";
 import { FiX } from "react-icons/fi";
@@ -31,14 +32,19 @@ export function RecentlyViewed() {
               onClick={() => router.push(`/token/${item.address}`)}
               className="flex items-center space-x-2 bg-surface-container-low border border-outline-variant px-2.5 py-1 rounded text-body-sm hover:border-outline cursor-pointer transition-colors group"
             >
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  isPositive ? "bg-tertiary-fixed" : "bg-error"
-                }`}
-              ></span>
+              <TokenAvatar
+                address={item.address}
+                symbol={item.symbol}
+                size={18}
+              />
               <span className="font-medium text-primary group-hover:text-primary-fixed transition-colors">
                 {item.symbol}
               </span>
+              <span
+                className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                  isPositive ? "bg-tertiary-fixed" : "bg-error"
+                }`}
+              ></span>
               {priceDisplay && (
                 <span className="text-data-mono-sm font-data-mono-sm text-outline">
                   {priceDisplay}

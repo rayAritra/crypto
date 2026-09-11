@@ -9,7 +9,7 @@ import {
     FiCheckCircle,
     FiEye,
     FiLock,
-    FiTrash2
+    FiTrash2,
 } from "react-icons/fi";
 import { RiStarFill, RiStarLine } from "react-icons/ri";
 
@@ -126,10 +126,15 @@ export function WatchlistSimulatorPlayground() {
                   }`}
                 >
                   {it.selected ? (
-                    <RiStarFill className="text-xs" />
+                    <RiStarFill className="text-xs shrink-0" />
                   ) : (
-                    <RiStarLine className="text-xs" />
+                    <RiStarLine className="text-xs shrink-0" />
                   )}
+                  <TokenAvatar
+                    address={it.address}
+                    symbol={it.symbol}
+                    size={16}
+                  />
                   <span>{it.symbol}</span>
                 </button>
               ))}

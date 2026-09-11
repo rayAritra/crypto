@@ -1,5 +1,6 @@
 "use client";
 
+import { TokenAvatar } from "@/components/shared/TokenAvatar";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiBarChart2, FiSearch, FiTerminal, FiZap } from "react-icons/fi";
@@ -563,7 +564,11 @@ export function LandingHeroV0() {
             href="/token/0x892a00000000000000000000000000000000103f"
             className="absolute left-[15%] sm:left-[24%] top-[55%] -translate-y-1/2 glass-pill px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 shadow-lg backdrop-blur-md hover:border-[#43c98b]/50 transition-all hover:scale-105 cursor-pointer hidden sm:flex z-20"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#43c98b]"></span>
+            <TokenAvatar
+              address="0x892a00000000000000000000000000000000103f"
+              symbol="RHX"
+              size={18}
+            />
             <span className="text-xs font-mono font-medium text-white">
               $RHX · Pool $412K
             </span>
@@ -580,6 +585,11 @@ export function LandingHeroV0() {
             <div className="w-2 h-2 rounded-full bg-[#c7ff5b] animate-ping"></div>
             <div className="text-left">
               <div className="text-[10px] font-mono uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5">
+                <TokenAvatar
+                  address="0x71c5000000000000000000000000000000004490"
+                  symbol="HOOD"
+                  size={15}
+                />
                 <span>$HOOD INDEX</span>
                 <span className="text-[#c7ff5b] font-semibold">
                   ATH +284.6%
@@ -612,6 +622,7 @@ export function LandingHeroV0() {
                 key={idx}
                 className="flex items-center gap-1 text-[10px] sm:text-[11px]"
               >
+                <TokenAvatar symbol={tx.pair} size={14} />
                 <span className="text-white font-semibold">{tx.pair}</span>
                 <span
                   className={`px-1 py-0.2 rounded text-[8.5px] sm:text-[9px] font-bold ${

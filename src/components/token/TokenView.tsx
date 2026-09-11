@@ -9,22 +9,22 @@ import { TokenAvatar } from "@/components/shared/TokenAvatar";
 import { MetricTooltip } from "@/components/shared/Tooltip";
 import { WatchButton } from "@/components/shared/WatchButton";
 import {
-    compactNumber,
-    formatSupply,
-    shortenAddress,
+  compactNumber,
+  formatSupply,
+  shortenAddress,
 } from "@/lib/utils/format";
 import type { TokenAnalytics, Transaction } from "@/types/token";
 import { useEffect, useState } from "react";
 import {
-    FiActivity,
-    FiExternalLink,
-    FiFileText,
-    FiLayers,
-    FiRefreshCw,
-    FiShare2,
-    FiShield,
-    FiUsers,
-    FiX,
+  FiActivity,
+  FiExternalLink,
+  FiFileText,
+  FiLayers,
+  FiRefreshCw,
+  FiShare2,
+  FiShield,
+  FiUsers,
+  FiX,
 } from "react-icons/fi";
 import { RiArrowRightUpLine } from "react-icons/ri";
 import { PriceChart } from "./PriceChart";
@@ -247,6 +247,7 @@ export function TokenView({ address }: { address: string }) {
           <TokenAvatar
             address={token.address}
             symbol={token.symbol}
+            iconUrl={token.iconUrl}
             size={60}
           />
           <div className="flex flex-col min-w-0">

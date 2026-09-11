@@ -10,12 +10,12 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FiArrowRight, FiSearch, FiSliders } from "react-icons/fi";
 import {
-  RiArrowRightUpLine,
-  RiExchangeLine,
-  RiLayoutGridLine,
-  RiStarFill,
-  RiStarLine,
-  RiTableLine,
+    RiArrowRightUpLine,
+    RiExchangeLine,
+    RiLayoutGridLine,
+    RiStarFill,
+    RiStarLine,
+    RiTableLine,
 } from "react-icons/ri";
 
 type TabKey = "trending" | "new" | "volume";
@@ -382,6 +382,7 @@ export function DiscoveryTabs({
                         <TokenAvatar
                           address={item.token.address}
                           symbol={item.token.symbol}
+                          iconUrl={item.token.iconUrl}
                           size={36}
                         />
                       </Link>
@@ -650,6 +651,7 @@ export function DiscoveryTabs({
                               <TokenAvatar
                                 address={item.token.address}
                                 symbol={item.token.symbol}
+                                iconUrl={item.token.iconUrl}
                                 size={26}
                               />
                             </Link>

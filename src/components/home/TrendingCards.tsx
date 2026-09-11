@@ -1,3 +1,4 @@
+import { TokenAvatar } from "@/components/shared/TokenAvatar";
 import { compactNumber } from "@/lib/utils/format";
 import type { RankedToken } from "@/types/token";
 import Link from "next/link";
@@ -61,18 +62,26 @@ export function TrendingCards({
                 href={`/token/${item.token.address}`}
                 className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-space-md hover:border-primary-fixed/40 transition-all duration-150 block group cursor-pointer"
               >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <h3 className="text-headline-sm font-headline-sm text-primary group-hover:text-primary-fixed transition-colors font-semibold">
-                        {item.token.symbol}
-                      </h3>
-                      <span className="text-data-mono-sm font-data-mono-sm text-outline">
-                        {`0${index + 1}`}
-                      </span>
-                    </div>
-                    <div className="text-body-sm text-on-surface-variant mt-0.5 truncate max-w-[160px]">
-                      {item.token.name}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <TokenAvatar
+                      address={item.token.address}
+                      symbol={item.token.symbol}
+                      iconUrl={item.token.iconUrl}
+                      size={36}
+                    />
+                    <div className="min-w-0">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="text-headline-sm font-headline-sm text-primary group-hover:text-primary-fixed transition-colors font-semibold truncate">
+                          {item.token.symbol}
+                        </h3>
+                        <span className="text-data-mono-sm font-data-mono-sm text-outline shrink-0">
+                          {`0${index + 1}`}
+                        </span>
+                      </div>
+                      <div className="text-body-sm text-on-surface-variant mt-0.5 truncate max-w-[150px]">
+                        {item.token.name}
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">

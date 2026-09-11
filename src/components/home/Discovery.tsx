@@ -105,6 +105,7 @@ export function Discovery({
                       <TokenAvatar
                         address={item.token.address}
                         symbol={item.token.symbol}
+                        iconUrl={item.token.iconUrl}
                         size={40}
                       />
                       <span>
@@ -174,6 +175,7 @@ export function Discovery({
               <TokenAvatar
                 address={item.token.address}
                 symbol={item.token.symbol}
+                iconUrl={item.token.iconUrl}
                 size={36}
               />
               <span>

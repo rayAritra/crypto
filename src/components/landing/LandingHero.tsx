@@ -1,5 +1,6 @@
 "use client";
 
+import { TokenAvatar } from "@/components/shared/TokenAvatar";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
@@ -377,8 +378,36 @@ export function LandingHero() {
               <div className="text-xs sm:text-sm font-data-mono-sm font-medium text-white/90 truncate">
                 Search Robinhood Chain tokens or 0x contract...
               </div>
-              <div className="text-[10px] font-data-mono-sm text-outline truncate">
-                $HOOD, $RHX, $LENS, or paste verified L2 bytecode address
+              <div className="text-[10px] font-data-mono-sm text-outline truncate flex items-center gap-1.5 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-white/80">
+                  <TokenAvatar
+                    symbol="HOOD"
+                    address="0x71c5000000000000000000000000000000004490"
+                    size={13}
+                  />
+                  <span>$HOOD</span>
+                </span>
+                <span>•</span>
+                <span className="inline-flex items-center gap-1 text-white/80">
+                  <TokenAvatar
+                    symbol="RHX"
+                    address="0x892a00000000000000000000000000000000103f"
+                    size={13}
+                  />
+                  <span>$RHX</span>
+                </span>
+                <span>•</span>
+                <span className="inline-flex items-center gap-1 text-white/80">
+                  <TokenAvatar
+                    symbol="LENS"
+                    address="0x3310000000000000000000000000000000008821"
+                    size={13}
+                  />
+                  <span>$LENS</span>
+                </span>
+                <span className="hidden min-[420px]:inline text-outline">
+                  • paste L2 contract
+                </span>
               </div>
             </div>
             <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-surface-container-high border border-outline-variant text-xs font-data-mono-sm font-bold text-primary-fixed shrink-0">

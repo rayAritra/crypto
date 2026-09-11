@@ -294,6 +294,7 @@ export function CompareClient() {
                     <TokenAvatar
                       address={data[0].token.address}
                       symbol={data[0].token.symbol}
+                      iconUrl={data[0].token.iconUrl}
                       size={44}
                     />
                     <div className="min-w-0">
@@ -528,7 +529,16 @@ export function CompareClient() {
                       ) : undefined
                     }
                   >
-                    {r.symbol} {isAlreadyAdded ? "✓" : ""}
+                    <span className="flex items-center gap-1.5">
+                      <TokenAvatar
+                        address={r.address}
+                        symbol={r.symbol}
+                        size={15}
+                      />
+                      <span>
+                        {r.symbol} {isAlreadyAdded ? "✓" : ""}
+                      </span>
+                    </span>
                   </Button>
                 );
               })}
@@ -678,6 +688,7 @@ export function CompareClient() {
                           <TokenAvatar
                             address={x.token.address}
                             symbol={x.token.symbol}
+                            iconUrl={x.token.iconUrl}
                             size={42}
                           />
                         </Link>

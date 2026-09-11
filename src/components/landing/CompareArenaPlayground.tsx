@@ -9,7 +9,7 @@ import {
     FiDroplet,
     FiPieChart,
     FiShield,
-    FiTrendingUp
+    FiTrendingUp,
 } from "react-icons/fi";
 import { RiArrowLeftRightLine } from "react-icons/ri";
 
@@ -126,13 +126,18 @@ export function CompareArenaPlayground() {
                   <button
                     key={k}
                     onClick={() => setTokenAKey(k)}
-                    className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer flex items-center gap-1.5 ${
                       tokenAKey === k
                         ? "bg-[#c7ff5b] text-[#080a08] font-bold"
                         : "text-on-surface-variant hover:text-white"
                     }`}
                   >
-                    ${k}
+                    <TokenAvatar
+                      address={ARENA_TOKENS[k].address}
+                      symbol={k}
+                      size={15}
+                    />
+                    <span>${k}</span>
                   </button>
                 ))}
               </div>
@@ -152,13 +157,18 @@ export function CompareArenaPlayground() {
                   <button
                     key={k}
                     onClick={() => setTokenBKey(k)}
-                    className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer flex items-center gap-1.5 ${
                       tokenBKey === k
                         ? "bg-white text-[#080a08] font-bold"
                         : "text-on-surface-variant hover:text-white"
                     }`}
                   >
-                    ${k}
+                    <TokenAvatar
+                      address={ARENA_TOKENS[k].address}
+                      symbol={k}
+                      size={15}
+                    />
+                    <span>${k}</span>
                   </button>
                 ))}
               </div>

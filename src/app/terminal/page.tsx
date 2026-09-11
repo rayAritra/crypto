@@ -2,6 +2,7 @@ import { DiscoveryTabs } from "@/components/home/DiscoveryTabs";
 import { RecentlyViewed } from "@/components/home/RecentlyViewed";
 import { TokenSearch } from "@/components/home/TokenSearch";
 import { TrendingCards } from "@/components/home/TrendingCards";
+import { TokenAvatar } from "@/components/shared/TokenAvatar";
 import { getEnv } from "@/config/env";
 import { discovery } from "@/lib/db/queries";
 import { compactNumber } from "@/lib/utils/format";
@@ -141,12 +142,18 @@ export default async function TerminalPage() {
                         href={`/token/${item.token.address}`}
                         className="py-2.5 flex items-center justify-between hover:bg-surface-container-high/30 px-1.5 rounded transition-colors group cursor-pointer"
                       >
-                        <div className="flex items-center space-x-3">
-                          <span className="text-data-mono-sm font-data-mono-sm text-outline">
+                        <div className="flex items-center space-x-3 min-w-0">
+                          <span className="text-data-mono-sm font-data-mono-sm text-outline shrink-0">
                             0{index + 1}
                           </span>
-                          <div>
-                            <div className="font-medium text-primary group-hover:text-primary-fixed transition-colors font-data-mono-md">
+                          <TokenAvatar
+                            address={item.token.address}
+                            symbol={item.token.symbol}
+                            iconUrl={item.token.iconUrl}
+                            size={28}
+                          />
+                          <div className="min-w-0">
+                            <div className="font-medium text-primary group-hover:text-primary-fixed transition-colors font-data-mono-md truncate">
                               {item.token.symbol}
                             </div>
                             <div className="text-body-sm text-on-surface-variant text-[11px] truncate max-w-[150px]">
