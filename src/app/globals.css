@@ -602,3 +602,25 @@
 .laser-beam {
   animation: laserShimmer 3.5s ease-in-out infinite;
 }
+
+/* Token Avatar Normalization */
+.token-avatar {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 9999px !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  vertical-align: middle;
+}
+
+.token-avatar img,
+.token-avatar svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 9999px !important;
+  display: block !important;
+}
