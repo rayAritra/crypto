@@ -1,17 +1,367 @@
-import "server-only";import {db} from "./supabase-server";import {trendingScore} from "@/lib/analytics/trending";import type {MarketData,PricePoint,RankedToken,Risk,Token} from "@/types/token";
-type TokenRow={id:string;contract_address:string;name:string;symbol:string;decimals:number;total_supply:string;chain_id:number;first_seen_at:string};
-type MetricRow={token_id:string;price_usd:string|null;market_cap_usd:string|null;fully_diluted_value_usd:string|null;liquidity_usd:string|null;volume_24h_usd:string|null;buys_24h:number|null;sells_24h:number|null;price_change_24h:string|null;source:string|null;captured_at:string};
-type RiskRow={token_id:string;score:number;risk_level:string;breakdown:Risk["deductions"];calculated_at:string};
-const numeric=(value:unknown)=>value==null?null:Number(value);
-function mapToken(row:TokenRow,explorer:string):Token{return{address:row.contract_address,name:row.name,symbol:row.symbol,decimals:row.decimals,totalSupply:String(row.total_supply),chainId:Number(row.chain_id),firstSeenAt:row.first_seen_at,explorerUrl:`${explorer}/address/${row.contract_address}`}}
-function mapMetric(row:MetricRow):MarketData{return{priceUsd:numeric(row.price_usd),marketCapUsd:numeric(row.market_cap_usd),fdvUsd:numeric(row.fully_diluted_value_usd),liquidityUsd:numeric(row.liquidity_usd),volume24hUsd:numeric(row.volume_24h_usd),buys24h:row.buys_24h,sells24h:row.sells_24h,priceChange24h:numeric(row.price_change_24h),pairAddress:null,dex:null,source:row.source??"Indexed provider",capturedAt:row.captured_at}}
-export async function cachedToken(address:string,chainId:number,explorer:string){const client=db();if(!client)return null;try{const freshAfter=new Date(Date.now()-86400000).toISOString();const {data,error}=await client.from("tokens").select("*").eq("chain_id",chainId).eq("contract_address",address.toLowerCase()).gte("last_updated_at",freshAfter).maybeSingle();if(error)throw error;return data?mapToken(data as TokenRow,explorer):null}catch(error){log("database_read_error",error);return null}}
-export async function persistToken(token:Token,metrics:MarketData|null,risk:Risk){const client=db();if(!client)return;try{const {data,error}=await client.from("tokens").upsert({chain_id:token.chainId,contract_address:token.address.toLowerCase(),name:token.name,symbol:token.symbol,decimals:token.decimals,total_supply:token.totalSupply,last_updated_at:new Date().toISOString()},{onConflict:"chain_id,contract_address"}).select("id").single();if(error)throw error;if(metrics){const {error:metricError}=await client.from("token_metrics").insert({token_id:data.id,price_usd:metrics.priceUsd,market_cap_usd:metrics.marketCapUsd,fully_diluted_value_usd:metrics.fdvUsd,liquidity_usd:metrics.liquidityUsd,volume_24h_usd:metrics.volume24hUsd,buys_24h:metrics.buys24h,sells_24h:metrics.sells24h,price_change_24h:metrics.priceChange24h,source:metrics.source});if(metricError)throw metricError}const {error:riskError}=await client.from("risk_scores").insert({token_id:data.id,score:risk.score,risk_level:risk.level,breakdown:risk.deductions});if(riskError)throw riskError}catch(error){log("database_write_error",error)}}
-export async function metricHistory(address:string,chainId:number):Promise<PricePoint[]>{const client=db();if(!client)return[];try{const{data:token,error:tokenError}=await client.from("tokens").select("id").eq("chain_id",chainId).eq("contract_address",address.toLowerCase()).maybeSingle();if(tokenError)throw tokenError;if(!token)return[];const{data,error}=await client.from("token_metrics").select("price_usd,captured_at").eq("token_id",token.id).not("price_usd","is",null).order("captured_at",{ascending:false}).limit(168);if(error)throw error;return(data??[]).flatMap(row=>{const price=numeric(row.price_usd),timestamp=new Date(String(row.captured_at)).getTime();return price!=null&&Number.isFinite(timestamp)?[{price,timestamp}]:[]}).reverse()}catch(error){log("database_metric_history_error",error);return[]}}
-export async function staleTokenAddresses(limit=25){const client=db();if(!client)return[];try{const before=new Date(Date.now()-300000).toISOString();const {data,error}=await client.from("tokens").select("contract_address").lt("last_updated_at",before).order("last_updated_at").limit(limit);if(error)throw error;return(data??[]).map(row=>String(row.contract_address))}catch(error){log("database_stale_query_error",error);return[]}}
-export async function discovery(kind:"new"|"trending"|"volume",explorer:string):Promise<RankedToken[]>{const client=db();if(!client)return[];const allTokens=await fetchAllTokens(client);if(kind==="new")return hydrate(allTokens,explorer);const rankingType=kind==="volume"?"volume":"trending",{data}=await client.from("token_rankings").select("score,tokens(*)").eq("ranking_type",rankingType).order("score",{ascending:false});type Ranking={tokens:TokenRow|TokenRow[]|null};const ranked=((data??[]) as Ranking[]).flatMap(row=>{const token=Array.isArray(row.tokens)?row.tokens[0]:row.tokens;return token?[token]:[]}),rankedIds=new Set(ranked.map(token=>token.id)),tokens=[...ranked,...allTokens.filter(token=>!rankedIds.has(token.id))];return hydrate(tokens,explorer)}
-async function fetchAllTokens(client:NonNullable<ReturnType<typeof db>>){const pageSize=1000,rows:TokenRow[]=[];for(let from=0;;from+=pageSize){const{data,error}=await client.from("tokens").select("*").order("first_seen_at",{ascending:false}).range(from,from+pageSize-1);if(error)throw error;const page=(data??[]) as TokenRow[];rows.push(...page);if(page.length<pageSize)break}return rows}
-export async function recalculateRankings(){const client=db();if(!client)return;const {data:tokens}=await client.from("tokens").select("id").limit(1000);const ids=(tokens??[]).map(row=>String(row.id));if(!ids.length)return;const {data}=await client.from("token_metrics").select("*").in("token_id",ids).order("captured_at",{ascending:false});const latest=new Map<string,MetricRow>();for(const row of(data??[]) as MetricRow[])if(!latest.has(row.token_id))latest.set(row.token_id,row);const rows=[...latest.values()];const max={volume24hUsd:Math.max(...rows.map(row=>numeric(row.volume_24h_usd)??0),1),transactions24h:Math.max(...rows.map(row=>(row.buys_24h??0)+(row.sells_24h??0)),1),holderGrowth:1,liquidityUsd:Math.max(...rows.map(row=>numeric(row.liquidity_usd)??0),1)};await client.from("token_rankings").delete().in("ranking_type",["trending","volume"]);const inserts=rows.flatMap(row=>{const volume=numeric(row.volume_24h_usd)??0;const score=trendingScore({volume24hUsd:volume,transactions24h:(row.buys_24h??0)+(row.sells_24h??0),holderGrowth:0,liquidityUsd:numeric(row.liquidity_usd)??0,momentum:numeric(row.price_change_24h)??0},max);return[{token_id:row.token_id,ranking_type:"trending",score},{token_id:row.token_id,ranking_type:"volume",score:volume}]});if(inserts.length)await client.from("token_rankings").insert(inserts)}
-async function hydrate(tokens:TokenRow[],explorer:string){const client=db();if(!client||!tokens.length)return[];const ids=tokens.map(token=>token.id);const [{data:metrics},{data:risks}]=await Promise.all([client.from("token_metrics").select("*").in("token_id",ids).order("captured_at",{ascending:false}),client.from("risk_scores").select("*").in("token_id",ids).order("calculated_at",{ascending:false})]);const metricMap=new Map<string,MarketData>(),riskMap=new Map<string,Risk>();for(const row of(metrics??[]) as MetricRow[])if(!metricMap.has(row.token_id))metricMap.set(row.token_id,mapMetric(row));for(const row of(risks??[]) as RiskRow[])if(!riskMap.has(row.token_id))riskMap.set(row.token_id,{score:row.score,level:row.risk_level,deductions:row.breakdown,calculatedAt:row.calculated_at});return tokens.map(token=>({token:mapToken(token,explorer),metrics:metricMap.get(token.id)??null,risk:riskMap.get(token.id)??null}))}
-export async function searchTokens(term:string,explorer:string):Promise<RankedToken[]>{const client=db();if(!client||term.trim().length<2)return[];try{const safe=term.trim().replace(/[%_,()]/g,"").slice(0,64);const {data,error}=await client.from("tokens").select("*").or(`name.ilike.%${safe}%,symbol.ilike.%${safe}%,contract_address.ilike.${safe}%`).limit(8);if(error)throw error;return hydrate((data??[]) as TokenRow[],explorer)}catch(error){log("database_search_error",error);return[]}}
-function log(event:string,error:unknown){console.error(JSON.stringify({event,message:error instanceof Error?error.message:"unknown"}))}
+import { trendingScore } from "@/lib/analytics/trending";
+import { resolveTokenIconUrl } from "@/lib/market/token-icons";
+import type {
+    MarketData,
+    PricePoint,
+    RankedToken,
+    Risk,
+    Token,
+} from "@/types/token";
+import "server-only";
+import { db } from "./supabase-server";
+type TokenRow = {
+  id: string;
+  contract_address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  total_supply: string;
+  chain_id: number;
+  first_seen_at: string;
+};
+type MetricRow = {
+  token_id: string;
+  price_usd: string | null;
+  market_cap_usd: string | null;
+  fully_diluted_value_usd: string | null;
+  liquidity_usd: string | null;
+  volume_24h_usd: string | null;
+  buys_24h: number | null;
+  sells_24h: number | null;
+  price_change_24h: string | null;
+  source: string | null;
+  captured_at: string;
+};
+type RiskRow = {
+  token_id: string;
+  score: number;
+  risk_level: string;
+  breakdown: Risk["deductions"];
+  calculated_at: string;
+};
+const numeric = (value: unknown) => (value == null ? null : Number(value));
+function mapToken(row: TokenRow, explorer: string): Token {
+  return {
+    address: row.contract_address,
+    name: row.name,
+    symbol: row.symbol,
+    decimals: row.decimals,
+    totalSupply: String(row.total_supply),
+    chainId: Number(row.chain_id),
+    firstSeenAt: row.first_seen_at,
+    explorerUrl: `${explorer}/address/${row.contract_address}`,
+    iconUrl: resolveTokenIconUrl(row.symbol, row.contract_address),
+  };
+}
+function mapMetric(row: MetricRow): MarketData {
+  return {
+    priceUsd: numeric(row.price_usd),
+    marketCapUsd: numeric(row.market_cap_usd),
+    fdvUsd: numeric(row.fully_diluted_value_usd),
+    liquidityUsd: numeric(row.liquidity_usd),
+    volume24hUsd: numeric(row.volume_24h_usd),
+    buys24h: row.buys_24h,
+    sells24h: row.sells_24h,
+    priceChange24h: numeric(row.price_change_24h),
+    pairAddress: null,
+    dex: null,
+    source: row.source ?? "Indexed provider",
+    capturedAt: row.captured_at,
+  };
+}
+export async function cachedToken(
+  address: string,
+  chainId: number,
+  explorer: string,
+) {
+  const client = db();
+  if (!client) return null;
+  try {
+    const freshAfter = new Date(Date.now() - 86400000).toISOString();
+    const { data, error } = await client
+      .from("tokens")
+      .select("*")
+      .eq("chain_id", chainId)
+      .eq("contract_address", address.toLowerCase())
+      .gte("last_updated_at", freshAfter)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? mapToken(data as TokenRow, explorer) : null;
+  } catch (error) {
+    log("database_read_error", error);
+    return null;
+  }
+}
+export async function persistToken(
+  token: Token,
+  metrics: MarketData | null,
+  risk: Risk,
+) {
+  const client = db();
+  if (!client) return;
+  try {
+    const { data, error } = await client
+      .from("tokens")
+      .upsert(
+        {
+          chain_id: token.chainId,
+          contract_address: token.address.toLowerCase(),
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals,
+          total_supply: token.totalSupply,
+          last_updated_at: new Date().toISOString(),
+        },
+        { onConflict: "chain_id,contract_address" },
+      )
+      .select("id")
+      .single();
+    if (error) throw error;
+    if (metrics) {
+      const { error: metricError } = await client
+        .from("token_metrics")
+        .insert({
+          token_id: data.id,
+          price_usd: metrics.priceUsd,
+          market_cap_usd: metrics.marketCapUsd,
+          fully_diluted_value_usd: metrics.fdvUsd,
+          liquidity_usd: metrics.liquidityUsd,
+          volume_24h_usd: metrics.volume24hUsd,
+          buys_24h: metrics.buys24h,
+          sells_24h: metrics.sells24h,
+          price_change_24h: metrics.priceChange24h,
+          source: metrics.source,
+        });
+      if (metricError) throw metricError;
+    }
+    const { error: riskError } = await client
+      .from("risk_scores")
+      .insert({
+        token_id: data.id,
+        score: risk.score,
+        risk_level: risk.level,
+        breakdown: risk.deductions,
+      });
+    if (riskError) throw riskError;
+  } catch (error) {
+    log("database_write_error", error);
+  }
+}
+export async function metricHistory(
+  address: string,
+  chainId: number,
+): Promise<PricePoint[]> {
+  const client = db();
+  if (!client) return [];
+  try {
+    const { data: token, error: tokenError } = await client
+      .from("tokens")
+      .select("id")
+      .eq("chain_id", chainId)
+      .eq("contract_address", address.toLowerCase())
+      .maybeSingle();
+    if (tokenError) throw tokenError;
+    if (!token) return [];
+    const { data, error } = await client
+      .from("token_metrics")
+      .select("price_usd,captured_at")
+      .eq("token_id", token.id)
+      .not("price_usd", "is", null)
+      .order("captured_at", { ascending: false })
+      .limit(168);
+    if (error) throw error;
+    return (data ?? [])
+      .flatMap((row) => {
+        const price = numeric(row.price_usd),
+          timestamp = new Date(String(row.captured_at)).getTime();
+        return price != null && Number.isFinite(timestamp)
+          ? [{ price, timestamp }]
+          : [];
+      })
+      .reverse();
+  } catch (error) {
+    log("database_metric_history_error", error);
+    return [];
+  }
+}
+export async function staleTokenAddresses(limit = 25) {
+  const client = db();
+  if (!client) return [];
+  try {
+    const before = new Date(Date.now() - 300000).toISOString();
+    const { data, error } = await client
+      .from("tokens")
+      .select("contract_address")
+      .lt("last_updated_at", before)
+      .order("last_updated_at")
+      .limit(limit);
+    if (error) throw error;
+    return (data ?? []).map((row) => String(row.contract_address));
+  } catch (error) {
+    log("database_stale_query_error", error);
+    return [];
+  }
+}
+export async function discovery(
+  kind: "new" | "trending" | "volume",
+  explorer: string,
+): Promise<RankedToken[]> {
+  const client = db();
+  if (!client) return [];
+  const allTokens = await fetchAllTokens(client);
+  if (kind === "new") return hydrate(allTokens, explorer);
+  const rankingType = kind === "volume" ? "volume" : "trending",
+    { data } = await client
+      .from("token_rankings")
+      .select("score,tokens(*)")
+      .eq("ranking_type", rankingType)
+      .order("score", { ascending: false });
+  type Ranking = { tokens: TokenRow | TokenRow[] | null };
+  const ranked = ((data ?? []) as Ranking[]).flatMap((row) => {
+      const token = Array.isArray(row.tokens) ? row.tokens[0] : row.tokens;
+      return token ? [token] : [];
+    }),
+    rankedIds = new Set(ranked.map((token) => token.id)),
+    tokens = [
+      ...ranked,
+      ...allTokens.filter((token) => !rankedIds.has(token.id)),
+    ];
+  return hydrate(tokens, explorer);
+}
+async function fetchAllTokens(client: NonNullable<ReturnType<typeof db>>) {
+  const pageSize = 1000,
+    rows: TokenRow[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await client
+      .from("tokens")
+      .select("*")
+      .order("first_seen_at", { ascending: false })
+      .range(from, from + pageSize - 1);
+    if (error) throw error;
+    const page = (data ?? []) as TokenRow[];
+    rows.push(...page);
+    if (page.length < pageSize) break;
+  }
+  return rows;
+}
+export async function recalculateRankings() {
+  const client = db();
+  if (!client) return;
+  const { data: tokens } = await client.from("tokens").select("id").limit(1000);
+  const ids = (tokens ?? []).map((row) => String(row.id));
+  if (!ids.length) return;
+  const { data } = await client
+    .from("token_metrics")
+    .select("*")
+    .in("token_id", ids)
+    .order("captured_at", { ascending: false });
+  const latest = new Map<string, MetricRow>();
+  for (const row of (data ?? []) as MetricRow[])
+    if (!latest.has(row.token_id)) latest.set(row.token_id, row);
+  const rows = [...latest.values()];
+  const max = {
+    volume24hUsd: Math.max(
+      ...rows.map((row) => numeric(row.volume_24h_usd) ?? 0),
+      1,
+    ),
+    transactions24h: Math.max(
+      ...rows.map((row) => (row.buys_24h ?? 0) + (row.sells_24h ?? 0)),
+      1,
+    ),
+    holderGrowth: 1,
+    liquidityUsd: Math.max(
+      ...rows.map((row) => numeric(row.liquidity_usd) ?? 0),
+      1,
+    ),
+  };
+  await client
+    .from("token_rankings")
+    .delete()
+    .in("ranking_type", ["trending", "volume"]);
+  const inserts = rows.flatMap((row) => {
+    const volume = numeric(row.volume_24h_usd) ?? 0;
+    const score = trendingScore(
+      {
+        volume24hUsd: volume,
+        transactions24h: (row.buys_24h ?? 0) + (row.sells_24h ?? 0),
+        holderGrowth: 0,
+        liquidityUsd: numeric(row.liquidity_usd) ?? 0,
+        momentum: numeric(row.price_change_24h) ?? 0,
+      },
+      max,
+    );
+    return [
+      { token_id: row.token_id, ranking_type: "trending", score },
+      { token_id: row.token_id, ranking_type: "volume", score: volume },
+    ];
+  });
+  if (inserts.length) await client.from("token_rankings").insert(inserts);
+}
+async function hydrate(tokens: TokenRow[], explorer: string) {
+  const client = db();
+  if (!client || !tokens.length) return [];
+  const ids = tokens.map((token) => token.id);
+  const [{ data: metrics }, { data: risks }] = await Promise.all([
+    client
+      .from("token_metrics")
+      .select("*")
+      .in("token_id", ids)
+      .order("captured_at", { ascending: false }),
+    client
+      .from("risk_scores")
+      .select("*")
+      .in("token_id", ids)
+      .order("calculated_at", { ascending: false }),
+  ]);
+  const metricMap = new Map<string, MarketData>(),
+    riskMap = new Map<string, Risk>();
+  for (const row of (metrics ?? []) as MetricRow[])
+    if (!metricMap.has(row.token_id))
+      metricMap.set(row.token_id, mapMetric(row));
+  for (const row of (risks ?? []) as RiskRow[])
+    if (!riskMap.has(row.token_id))
+      riskMap.set(row.token_id, {
+        score: row.score,
+        level: row.risk_level,
+        deductions: row.breakdown,
+        calculatedAt: row.calculated_at,
+      });
+  return tokens.map((token) => ({
+    token: mapToken(token, explorer),
+    metrics: metricMap.get(token.id) ?? null,
+    risk: riskMap.get(token.id) ?? null,
+  }));
+}
+export async function searchTokens(
+  term: string,
+  explorer: string,
+): Promise<RankedToken[]> {
+  const client = db();
+  if (!client || term.trim().length < 2) return [];
+  try {
+    const safe = term
+      .trim()
+      .replace(/[%_,()]/g, "")
+      .slice(0, 64);
+    const { data, error } = await client
+      .from("tokens")
+      .select("*")
+      .or(
+        `name.ilike.%${safe}%,symbol.ilike.%${safe}%,contract_address.ilike.${safe}%`,
+      )
+      .limit(8);
+    if (error) throw error;
+    return hydrate((data ?? []) as TokenRow[], explorer);
+  } catch (error) {
+    log("database_search_error", error);
+    return [];
+  }
+}
+function log(event: string, error: unknown) {
+  console.error(
+    JSON.stringify({
+      event,
+      message: error instanceof Error ? error.message : "unknown",
+    }),
+  );
+}
