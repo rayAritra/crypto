@@ -30,17 +30,24 @@ const VERIFIED_TOKEN_ICONS: Record<string, string> = {
   pepe: "https://coin-images.coingecko.com/coins/images/29850/large/pepe-token.png",
 
   // Tokenized Equities on Robinhood Chain
+  // Note: CoinGecko's "robinhood-tokenized-stock" entries for these all
+  // point to the same generic Robinhood feather placeholder image, so we
+  // use the distinct per-company logos from their "xStock" listings instead.
   googl:
-    "https://coin-images.coingecko.com/coins/images/102174124/large/0x2e0847e8910a9732eb3fb1bb4b70a580adad4fe3.png",
+    "https://coin-images.coingecko.com/coins/images/55610/large/Ticker_GOOG__Company_Name_Alphabet_Inc.__size_200x200_2x.png",
   nvda:
-    "https://coin-images.coingecko.com/coins/images/102174110/large/0xd0601ce157db5bdc3162bbac2a2c8af5320d9eec.png",
-  gme: "https://coin-images.coingecko.com/coins/images/102174150/large/0x1b0e319c6a659f002271b69db8a7df2f911c153e.png",
-  spcx:
-    "https://coin-images.coingecko.com/coins/images/102174129/large/0x4a0e65a3eccec6dbe60ae065f2e7bb85fae35eea.png",
+    "https://coin-images.coingecko.com/coins/images/55633/large/Ticker_NVDA__Company_Name_NVIDIA_Corp__size_200x200_2x.png",
+  gme: "https://coin-images.coingecko.com/coins/images/55607/large/Ticker_GME__Company_Name_gamestop__size_200x200_2x.png",
+  spcx: "https://coin-images.coingecko.com/coins/images/102173688/large/SPCXx.png",
   aapl:
-    "https://coin-images.coingecko.com/coins/images/102174123/large/0xaf3d76f1834a1d425780943c99ea8a608f8a93f9.png",
+    "https://coin-images.coingecko.com/coins/images/55586/large/Ticker_AAPL__Company_Name_Apple_Inc.__size_200x200_2x.png",
   msft:
-    "https://coin-images.coingecko.com/coins/images/102174116/large/0xe93237c50d904957cf27e7b1133b510c669c2e74.png",
+    "https://coin-images.coingecko.com/coins/images/55630/large/Ticker_MSFT__Company_Name_Microsoft_Inc.__size_200x200_2x.png",
+  intc:
+    "https://coin-images.coingecko.com/coins/images/55615/large/Ticker_INTC__Company_Name_Intel_Corp__size_200x200_2x.png",
+  amc: "https://coin-images.coingecko.com/coins/images/71400/large/amcon_160x160.png",
+  djt: "https://coin-images.coingecko.com/coins/images/102175855/large/bstocks_DJTB_64.png",
+  uso: "https://coin-images.coingecko.com/coins/images/71471/large/usoon_160x160.png",
 };
 
 const VERIFIED_ADDRESS_ICONS: Record<string, string> = {
