@@ -112,10 +112,13 @@ export function LandingHero() {
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    // Points structured across concentric latitude rings & longitudinal meridians
+    // Points structured across concentric latitude rings & longitudinal meridians.
+    // Fewer points on narrow viewports keep glyphs legible - the same 1600+
+    // point cloud crammed into a small-screen radius reads as illegible noise.
+    const isCompact = window.innerWidth < 640;
     const points: SpherePoint[] = [];
-    const numRings = 32;
-    const pointsPerRing = 52;
+    const numRings = isCompact ? 22 : 32;
+    const pointsPerRing = isCompact ? 34 : 52;
 
     for (let r = 0; r < numRings; r++) {
       const phi = (Math.PI * (r + 0.5)) / numRings;
@@ -203,8 +206,14 @@ export function LandingHero() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const centerX = width / 2;
 
+      // Section height can exceed the visible viewport (min-h clamps to the
+      // taller of content/viewport) - anchor sizing to whichever is actually
+      // on screen so the sphere never balloons past what a short device shows.
+      const viewportPx = window.innerHeight * dpr;
+      const effectiveHeight = Math.min(height, viewportPx);
+
       // Shifted slightly downwards to align behind hero content and search console
-      const centerY = height * 0.52;
+      const centerY = effectiveHeight * 0.52;
 
       currentMouseX += (targetMouseX - currentMouseX) * 0.04;
       currentMouseY += (targetMouseY - currentMouseY) * 0.04;
@@ -219,7 +228,7 @@ export function LandingHero() {
       const sinX = Math.sin(finalAngleX);
 
       // Sizing: slightly enlarged bounds for more immersive prominence
-      const maxAllowedRadiusByHeight = height * 0.43;
+      const maxAllowedRadiusByHeight = effectiveHeight * 0.43;
       const maxAllowedRadiusByWidth = width * 0.49;
       const baseRadius = Math.min(
         maxAllowedRadiusByWidth,
@@ -313,7 +322,7 @@ export function LandingHero() {
   }, []);
 
   return (
-    <section className="relative w-full min-h-[740px] sm:min-h-[800px] md:min-h-[860px] flex flex-col items-center justify-center pt-14 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-3 sm:px-margin-screen overflow-hidden selection:bg-[#c7ff5b] selection:text-[#080a08]">
+    <section className="relative w-full min-h-[min(740px,100svh)] sm:min-h-[min(800px,100svh)] md:min-h-[860px] flex flex-col items-center justify-center pt-14 sm:pt-16 md:pt-20 pb-12 sm:pb-16 md:pb-20 px-3 sm:px-margin-screen overflow-hidden selection:bg-[#c7ff5b] selection:text-[#080a08]">
       {/* Background Micro-Grid */}
       <div className="absolute inset-0 bg-micro-grid pointer-events-none opacity-40 z-0" />
 
@@ -333,8 +342,18 @@ export function LandingHero() {
         />
       </div>
 
+      {/* Text legibility scrim: darkens the headline/subtitle band so glyphs
+          on the sphere never fight with copy for contrast on small screens */}
+      <div
+        className="absolute left-1/2 top-[16%] -translate-x-1/2 w-[94%] max-w-3xl h-[46%] sm:h-[40%] pointer-events-none z-1"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(8,10,8,0.82) 0%, rgba(8,10,8,0.55) 45%, transparent 75%)",
+        }}
+      />
+
       {/* HERO TEXT & INTRO CLUSTER (Vertically centered with top and bottom breathing room) */}
-      <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10 my-auto py-4">
+      <div className="w-full max-w-5xl mx-auto flex flex-col items-center text-center relative z-10 my-auto py-4">
         {/* Eyebrow Brand Badge */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/80 border border-outline-variant/80 backdrop-blur-md mb-4 shadow-sm">
           <Image
@@ -359,7 +378,7 @@ export function LandingHero() {
         </h1>
 
         {/* Hero Subtitle - Styled with HTML Body Typography */}
-        <p className="text-sm sm:text-body-md md:text-body-lg font-body-lg text-on-surface-variant/90 max-w-2xl sm:max-w-3xl mb-7 sm:mb-8 font-normal leading-relaxed px-2 sm:px-0">
+        <p className="text-sm sm:text-body-md md:text-body-lg font-body-lg text-white/80 max-w-2xl sm:max-w-3xl mb-7 sm:mb-8 font-normal leading-relaxed px-2 sm:px-0">
           Institutional-grade contract telemetry, unmanipulated DEX liquidity,
           deterministic 100-point risk verification, and real-time wallet
           forensics. Built natively for Robinhood Chain.

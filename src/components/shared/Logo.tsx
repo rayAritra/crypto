@@ -100,7 +100,7 @@ export function Logo({
         )}
       </Link>
       {showBadge && (
-        <div className="hidden sm:flex items-center h-5 px-2 bg-surface-container-low border border-outline-variant rounded-full text-data-mono-sm font-data-mono-sm text-on-surface-variant">
+        <div className="hidden lg:flex items-center h-5 px-2 bg-surface-container-low border border-outline-variant rounded-full text-data-mono-sm font-data-mono-sm text-on-surface-variant">
           <span className="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-pulse mr-1.5"></span>
           <span>Robinhood Chain</span>
           <span className="text-outline mx-1">/</span>

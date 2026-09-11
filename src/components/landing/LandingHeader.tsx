@@ -32,7 +32,7 @@ export function LandingHeader() {
   return (
     <header className="absolute top-0 left-0 right-0 z-50 w-full bg-transparent">
       <div className="w-full max-w-[1360px] mx-auto site-container pt-4 sm:pt-5">
-        <div className="flex items-center justify-between h-12 px-3 sm:px-4 rounded-2xl glass-panel border border-white/10 backdrop-blur-md shadow-lg">
+        <div className="flex items-center justify-between gap-3 h-12 px-3 sm:px-4 rounded-2xl glass-panel border border-white/10 backdrop-blur-md shadow-lg">
           {/* Brand Logo Anchor on Left */}
           <div className="flex items-center gap-3">
             <Logo size="md" showBadge={true} />
@@ -59,7 +59,7 @@ export function LandingHeader() {
           </nav>
 
           {/* Trailing Action Cluster on Right */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             {/* Quick Search Pill */}
             <button
               type="button"
@@ -78,19 +78,23 @@ export function LandingHeader() {
               variant="primary"
               size="sm"
               href={compareHref}
-              icon={<FiArrowRight className="text-[13px]" />}
+              icon={<FiArrowRight className="hidden min-[400px]:inline text-[13px]" />}
               iconPosition="right"
+              className="px-2 min-[400px]:px-2.5"
             >
-              {state.ready && state.compare.length >= 2
-                ? `Compare ${state.compare.length} Tokens`
-                : "Compare 2 Tokens"}
+              <span className="min-[400px]:hidden">Compare</span>
+              <span className="hidden min-[400px]:inline">
+                {state.ready && state.compare.length >= 2
+                  ? `Compare ${state.compare.length} Tokens`
+                  : "Compare 2 Tokens"}
+              </span>
             </Button>
 
             {/* Mobile Menu Button */}
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden flex items-center justify-center p-1.5 rounded-lg text-on-surface-variant hover:text-primary-fixed hover:bg-surface-container-high transition-colors cursor-pointer"
+              className="md:hidden flex items-center justify-center p-1.5 rounded-lg text-on-surface-variant hover:text-primary-fixed hover:bg-surface-container-high transition-colors cursor-pointer shrink-0"
               aria-label="Toggle navigation"
             >
               {menuOpen ? (
