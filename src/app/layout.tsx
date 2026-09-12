@@ -2,6 +2,7 @@ import { AppFooter } from "@/components/layout/AppFooter";
 import { CompareTray } from "@/components/layout/CompareTray";
 import { Navbar } from "@/components/layout/Navbar";
 import { AppStateProvider } from "@/components/providers/AppState";
+import { WalletStateProvider } from "@/components/providers/WalletState";
 import { ToastViewport } from "@/components/shared/ToastViewport";
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
@@ -95,21 +96,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
       <body className="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-[#c7ff5b] selection:text-[#080a08] relative overflow-x-hidden">
-        <AppStateProvider>
-          <Suspense
-            fallback={
-              <div className="h-[48px] bg-surface border-b border-outline-variant" />
-            }
-          >
-            <Navbar />
-          </Suspense>
-          {children}
-          <CompareTray />
-          <ToastViewport />
-          <Suspense fallback={null}>
-            <AppFooter />
-          </Suspense>
-        </AppStateProvider>
+        <WalletStateProvider>
+          <AppStateProvider>
+            <Suspense
+              fallback={
+                <div className="h-[48px] bg-surface border-b border-outline-variant" />
+              }
+            >
+              <Navbar />
+            </Suspense>
+            {children}
+            <CompareTray />
+            <ToastViewport />
+            <Suspense fallback={null}>
+              <AppFooter />
+            </Suspense>
+          </AppStateProvider>
+        </WalletStateProvider>
       </body>
     </html>
   );

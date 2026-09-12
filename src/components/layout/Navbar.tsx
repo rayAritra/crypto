@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowRight, FiMenu, FiSearch, FiX } from "react-icons/fi";
+import { WalletButton } from "@/components/wallet/WalletButton";
 import { CommandPalette } from "./CommandPalette";
 
 const links = [
@@ -14,6 +15,7 @@ const links = [
   { href: "/discover", label: "Discover" },
   { href: "/watchlist", label: "Watchlist" },
   { href: "/compare", label: "Compare" },
+  { href: "/access", label: "Access" },
 ];
 
 export function Navbar() {
@@ -109,6 +111,8 @@ export function Navbar() {
                 ? `Compare ${state.compare.length} Tokens`
                 : "Compare 2 Tokens"}
             </Button>
+
+            <WalletButton compact />
 
             {/* Mobile menu toggle */}
             <button

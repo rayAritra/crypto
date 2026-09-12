@@ -7,12 +7,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FiArrowRight, FiMenu, FiSearch, FiX } from "react-icons/fi";
+import { WalletButton } from "@/components/wallet/WalletButton";
 
 const navLinks = [
   { href: "/terminal", label: "Terminal" },
   { href: "/discover", label: "Discover" },
   { href: "/watchlist", label: "Watchlist" },
   { href: "/compare", label: "Compare" },
+  { href: "/access", label: "Access" },
 ];
 
 export function LandingHeader() {
@@ -89,6 +91,8 @@ export function LandingHeader() {
                   : "Compare 2 Tokens"}
               </span>
             </Button>
+
+            <WalletButton compact />
 
             {/* Mobile Menu Button */}
             <button
