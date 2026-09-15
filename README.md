@@ -8,7 +8,7 @@ The App Router UI calls validated, rate-limited route handlers. `TokenService` c
 
 Included: address search, live contract metadata, price/liquidity/volume and pool aggregation, OHLCV charts, holder concentration, paginated holders and transfers, responsive token and discovery views, transparent risk deductions, copy/explorer UX, standardized API errors, health endpoint, distributed database rate limiting, security headers, protected Vercel Cron discovery/refresh, SEO routes, tests, and migrations.
 
-The `/access` utility layer uses the browser's injected EIP-1193 wallet directly through `viem`; no WalletConnect project or paid wallet API is required. Token discovery remains free. Once configured, users can pay the HoodLens ERC-20 for replay-protected creator launch passes and analytics credits, while a token-balance threshold controls Sentinel access. Payments stay disabled if the token, recipient, prices, or database are unavailable.
+The `/access` utility layer uses the browser's injected EIP-1193 wallet directly through `viem`; no WalletConnect project or paid wallet API is required. Token discovery remains free. Setting only `NEXT_PUBLIC_HOODLENS_TOKEN_ADDRESS` enables wallet balance reads and Sentinel holder access (one token by default). Paid creator launch passes and analytics credits remain disabled until the recipient, prices, and database are configured.
 
 ## Setup
 
@@ -22,7 +22,7 @@ Required: `ROBINHOOD_RPC_URL`, `ROBINHOOD_CHAIN_ID`, `ROBINHOOD_CHAIN_NAME`, and
 
 For persistence, create a Supabase project and apply every file under `supabase/migrations` using the Supabase CLI (`supabase db push`), then set `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and server-only `SUPABASE_SERVICE_ROLE_KEY`. Never expose the service role value through a `NEXT_PUBLIC_` variable. GeckoTerminal defaults to its verified `robinhood` network, while Blockscout defaults to Robinhood's official explorer API. Set a strong `CRON_SECRET`; Vercel sends it as a bearer token to the configured ten-minute cron route.
 
-Before enabling token utility, set every `NEXT_PUBLIC_HOODLENS_*` value shown in `.env.example` and apply migration `0004_hoodlens_utility.sql`. The token and recipient addresses are public configuration, not secrets. Test the complete payment flow on Robinhood Chain testnet before switching the chain ID, RPC, explorer, token, and recipient to mainnet. A successful ERC-20 transfer is credited only after the configured confirmation count, and each transaction hash can be recorded once.
+For launch-day holder utility, set `NEXT_PUBLIC_HOODLENS_TOKEN_ADDRESS` to the live ERC-20 contract address. The token address, symbol, decimals, and optional holder threshold are public configuration, not secrets. Token discovery and free research work without a token address. To enable paid utility later, also set `NEXT_PUBLIC_HOODLENS_PAYMENT_RECIPIENT`, `NEXT_PUBLIC_HOODLENS_LAUNCH_PRICE`, `NEXT_PUBLIC_HOODLENS_CREDIT_PRICE`, and the Supabase variables, then apply migration `0004_hoodlens_utility.sql`. Test the complete payment flow on Robinhood Chain testnet before switching the chain ID, RPC, explorer, token, and recipient to mainnet. A successful ERC-20 transfer is credited only after the configured confirmation count, and each transaction hash can be recorded once.
 
 ## Commands
 

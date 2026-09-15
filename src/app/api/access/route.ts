@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   }
 
   const client = db();
-  const configured = Boolean(hoodLensToken.address && hoodLensToken.recipient);
+  const configured = Boolean(hoodLensToken.address);
   let balance = 0n;
   if (hoodLensToken.address) {
     try {

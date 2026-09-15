@@ -39,7 +39,7 @@ export const hoodLensToken = {
     process.env.NEXT_PUBLIC_HOODLENS_CREDITS_PER_PAYMENT,
     100,
   ),
-  premiumBalance: process.env.NEXT_PUBLIC_HOODLENS_PREMIUM_BALANCE || "0",
+  premiumBalance: process.env.NEXT_PUBLIC_HOODLENS_PREMIUM_BALANCE || "1",
   confirmations: Math.max(
     1,
     integer(process.env.NEXT_PUBLIC_HOODLENS_PAYMENT_CONFIRMATIONS, 2),
