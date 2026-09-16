@@ -40,6 +40,36 @@ type RiskRow = {
   calculated_at: string;
 };
 const numeric = (value: unknown) => (value == null ? null : Number(value));
+// PostgREST rejects `.in()` filters once the id list pushes the request URL
+// past the ~16KB header limit (roughly 400+ uuids) — batch instead of sending
+// every token id in one query.
+const ID_BATCH_SIZE = 150;
+function chunk<T>(items: T[], size: number): T[][] {
+  const batches: T[][] = [];
+  for (let i = 0; i < items.length; i += size) batches.push(items.slice(i, i + size));
+  return batches;
+}
+async function fetchByTokenIds<T>(
+  client: NonNullable<ReturnType<typeof db>>,
+  table: string,
+  ids: string[],
+  orderColumn: string,
+): Promise<T[]> {
+  const rows: T[] = [];
+  for (const batch of chunk(ids, ID_BATCH_SIZE)) {
+    const { data, error } = await client
+      .from(table)
+      .select("*")
+      .in("token_id", batch)
+      .order(orderColumn, { ascending: false });
+    if (error) {
+      log(`database_${table}_batch_error`, error);
+      continue;
+    }
+    rows.push(...((data ?? []) as T[]));
+  }
+  return rows;
+}
 function mapToken(row: TokenRow, explorer: string): Token {
   return {
     address: row.contract_address,
@@ -250,13 +280,9 @@ export async function recalculateRankings() {
   const { data: tokens } = await client.from("tokens").select("id").limit(1000);
   const ids = (tokens ?? []).map((row) => String(row.id));
   if (!ids.length) return;
-  const { data } = await client
-    .from("token_metrics")
-    .select("*")
-    .in("token_id", ids)
-    .order("captured_at", { ascending: false });
+  const data = await fetchByTokenIds<MetricRow>(client, "token_metrics", ids, "captured_at");
   const latest = new Map<string, MetricRow>();
-  for (const row of (data ?? []) as MetricRow[])
+  for (const row of data)
     if (!latest.has(row.token_id)) latest.set(row.token_id, row);
   const rows = [...latest.values()];
   const max = {
@@ -301,24 +327,16 @@ async function hydrate(tokens: TokenRow[], explorer: string) {
   const client = db();
   if (!client || !tokens.length) return [];
   const ids = tokens.map((token) => token.id);
-  const [{ data: metrics }, { data: risks }] = await Promise.all([
-    client
-      .from("token_metrics")
-      .select("*")
-      .in("token_id", ids)
-      .order("captured_at", { ascending: false }),
-    client
-      .from("risk_scores")
-      .select("*")
-      .in("token_id", ids)
-      .order("calculated_at", { ascending: false }),
+  const [metrics, risks] = await Promise.all([
+    fetchByTokenIds<MetricRow>(client, "token_metrics", ids, "captured_at"),
+    fetchByTokenIds<RiskRow>(client, "risk_scores", ids, "calculated_at"),
   ]);
   const metricMap = new Map<string, MarketData>(),
     riskMap = new Map<string, Risk>();
-  for (const row of (metrics ?? []) as MetricRow[])
+  for (const row of metrics)
     if (!metricMap.has(row.token_id))
       metricMap.set(row.token_id, mapMetric(row));
-  for (const row of (risks ?? []) as RiskRow[])
+  for (const row of risks)
     if (!riskMap.has(row.token_id))
       riskMap.set(row.token_id, {
         score: row.score,
