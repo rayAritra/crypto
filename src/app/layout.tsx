@@ -10,7 +10,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://hoodlens.io",
+    process.env.NEXT_PUBLIC_APP_URL || "https://hoodlens.fun",
   ),
   title: {
     default:
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description:
     "Institutional clarity for Robinhood Chain. Real-time smart contract telemetry, deterministic risk deductions, multi-token comparative benchmarking, and privacy-first local watchlists.",
   applicationName: "HoodLens",
-  authors: [{ name: "HoodLens Core Team", url: "https://hoodlens.io" }],
+  authors: [{ name: "HoodLens Core Team", url: "https://hoodlens.fun" }],
   generator: "Next.js",
   keywords: [
     "Robinhood Chain",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
     description:
       "Institutional clarity for Robinhood Chain. Real-time contract telemetry, deterministic risk scoring, multi-token benchmark matrix, and privacy-first watchlists.",
-    url: "https://hoodlens.io",
+    url: "https://hoodlens.fun",
     siteName: "HoodLens",
     locale: "en_US",
     type: "website",
