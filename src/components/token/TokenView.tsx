@@ -129,18 +129,26 @@ export function TokenView({ address }: { address: string }) {
     return () => clearInterval(clock);
   }, []);
 
-  async function load(background = false) {
+  async function load(background = false, signal?: AbortSignal) {
+    if (!background) {
+      setData(null);
+      setError("");
+    }
     if (background) setRefreshing(true);
     try {
       const response = await fetch(`/api/token/${address}`, {
         cache: "no-store",
+        signal,
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error?.message);
+      if (signal?.aborted) return;
       setData(body);
       setError("");
     } catch (reason) {
-      if (!data) {
+      if (signal?.aborted) return;
+      if (!background) {
+        setData(null);
         setError(
           reason instanceof Error ? reason.message : "Unable to load token",
         );
@@ -151,9 +159,13 @@ export function TokenView({ address }: { address: string }) {
   }
 
   useEffect(() => {
-    void load();
-    const timer = setInterval(() => void load(true), 60000);
-    return () => clearInterval(timer);
+    const controller = new AbortController();
+    void load(false, controller.signal);
+    const timer = setInterval(() => void load(true, controller.signal), 60000);
+    return () => {
+      controller.abort();
+      clearInterval(timer);
+    };
   }, [address]);
 
   useEffect(() => {

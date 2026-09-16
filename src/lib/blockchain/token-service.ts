@@ -20,7 +20,7 @@ export class TokenService {
     if (!code || code === "0x")
       throw new ServiceError(
         "CONTRACT_NOT_FOUND",
-        "No contract exists at this address.",
+        "No ERC-20 contract was found at this address on Robinhood Chain.",
         404,
       );
     let token = await cachedToken(
