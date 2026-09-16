@@ -13,15 +13,18 @@ export class BlockscoutProvider {
   async holderData(address: string, totalSupply: string): Promise<{ summary: HolderSummary | null; holders: Holder[] }> {
     try {
       const [token, page] = await Promise.all([getJson<Record<string, unknown>>(`/tokens/${address}`), this.holders(address, null)]);
-      const count = number(token?.holders_count), eligible = page.items.filter(holder => !isExcluded(holder));
-      const holders = eligible.map(holder => ({ ...holder, percentage: percent(holder.balance, totalSupply) }));
+      const count = number(token?.holders_count);
+      const holders = page.items.map(holder => ({ ...holder, percentage: percent(holder.balance, totalSupply) }));
       return { summary: { holderCount: count, topHolderPercentage: holders[0]?.percentage ?? null, top10Percentage: holders.slice(0, 10).reduce((sum, holder) => sum + holder.percentage, 0) || null, source: "Robinhood Blockscout" }, holders };
     } catch (error) { log(error, "holders"); return { summary: null, holders: [] }; }
   }
 
   async holders(address: string, cursor: string | null): Promise<IndexedPage<Holder>> {
     const body = await getJson<Page<HolderItem>>(`/tokens/${address}/holders${query(cursor)}`);
-    return { items: (body?.items ?? []).map(item => ({ address: item.address.hash, balance: item.value, percentage: 0, isContract: Boolean(item.address.is_contract), label: item.address.name ?? null })), nextCursor: encode(body?.next_page_params) };
+    const items = (body?.items ?? [])
+      .map(item => ({ address: item.address.hash, balance: item.value, percentage: 0, isContract: Boolean(item.address.is_contract), label: item.address.name ?? null }))
+      .filter(holder => !isExcludedHolder(holder, address));
+    return { items, nextCursor: encode(body?.next_page_params) };
   }
 
   async transfers(address: string, cursor: string | null): Promise<IndexedPage<Transaction>> {
@@ -49,7 +52,7 @@ async function getJson<T>(path: string): Promise<T | null> {
 }
 function encode(value: Record<string, string | number> | null | undefined) { return value ? Buffer.from(JSON.stringify(value)).toString("base64url") : null; }
 function query(cursor: string | null) { if (!cursor) return ""; try { const value = JSON.parse(Buffer.from(cursor, "base64url").toString()) as Record<string, unknown>, allowed = new Set(["value", "address_hash", "items_count", "block_number", "index", "filter", "type"]), params = new URLSearchParams(); for (const [key, item] of Object.entries(value)) if (allowed.has(key) && (typeof item === "string" || typeof item === "number")) params.set(key, String(item)); return `?${params}`; } catch { return ""; } }
-function isExcluded(holder: Holder) { const lower = holder.address.toLowerCase(); return lower === "0x0000000000000000000000000000000000000000" || lower === "0x000000000000000000000000000000000000dead" || Boolean(holder.isContract && holder.label && /(pool|pair)/i.test(holder.label)); }
+export function isExcludedHolder(holder: Holder, tokenAddress: string) { const lower = holder.address.toLowerCase(); return lower === tokenAddress.toLowerCase() || lower === "0x0000000000000000000000000000000000000000" || lower === "0x000000000000000000000000000000000000dead" || Boolean(holder.isContract && holder.label && /(pool|pair)/i.test(holder.label)); }
 function percent(balance: string, supply: string) { try { return Number(BigInt(balance) * 1000000n / BigInt(supply)) / 10000; } catch { return 0; } }
 function number(value: unknown) { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : null; }
 function log(error: unknown, operation: string) { console.error(JSON.stringify({ event: "indexer_error", provider: "blockscout", operation, message: error instanceof Error ? error.message : "unknown" })); }

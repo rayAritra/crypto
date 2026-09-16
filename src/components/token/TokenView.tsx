@@ -605,7 +605,7 @@ export function TokenView({ address }: { address: string }) {
                     {data.holderSummary.top10Percentage?.toFixed(2) ?? "—"}%
                   </strong>
                 </span>
-                <span>Burn addresses excluded</span>
+                <span>Burn and token-contract balances excluded</span>
               </p>
             </div>
           ) : (
