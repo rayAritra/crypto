@@ -11,15 +11,19 @@ export function CopyButton({ value }: { value: string }) {
     <button
       type="button"
       className="inline-flex items-center justify-center p-1 rounded hover:bg-surface-container-highest text-outline hover:text-primary transition-colors cursor-pointer"
-      aria-label="Copy contract address"
+      aria-label={done ? "Contract address copied" : "Copy contract address"}
       title={done ? "Copied!" : "Copy address"}
       onClick={async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        await navigator.clipboard.writeText(value);
-        setDone(true);
-        notify("Contract copied to clipboard");
-        setTimeout(() => setDone(false), 1500);
+        try {
+          await navigator.clipboard.writeText(value);
+          setDone(true);
+          notify("Contract copied to clipboard");
+          setTimeout(() => setDone(false), 1500);
+        } catch {
+          notify("Unable to copy contract address", "info");
+        }
       }}
     >
       {done ? (
