@@ -1,5 +1,6 @@
 # HoodLens
 
+
 Production-oriented Robinhood Chain token intelligence built with Next.js, viem, Supabase, GeckoTerminal, and Blockscout. It reads ERC-20 metadata directly from the configured chain; unavailable indexed analytics are never fabricated.
 
 ## Architecture and features
