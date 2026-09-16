@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiArrowRight, FiBarChart2, FiTerminal } from "react-icons/fi";
+import { FiArrowRight, FiTerminal } from "react-icons/fi";
 
 export function ActionStage() {
   return (
@@ -16,8 +16,7 @@ export function ActionStage() {
           intelligence pipeline.
         </p>
 
-        {/* 3 Centralized Launchpad Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left mb-10 font-mono">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left mb-10 font-mono">
           {/* Card 1: Launch Hosted Terminal */}
           <Link
             href="/terminal"
@@ -64,25 +63,6 @@ export function ActionStage() {
             </div>
           </Link>
 
-          {/* Card 3: Benchmark Matrix */}
-          <Link
-            href="/compare"
-            className="glass-card glass-card-hover rounded-2xl p-6 border border-white/10 flex flex-col justify-between corner-bracket cursor-pointer group transition-all"
-          >
-            <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-white/20 transition-all">
-              <FiBarChart2 className="text-xl group-hover:text-[#c7ff5b] transition-colors" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-white mb-1 group-hover:text-[#c7ff5b] transition-colors flex items-center justify-between">
-                <span>Compare</span>
-                <FiArrowRight className="text-xs opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-              </h3>
-              <p className="text-[11px] text-on-surface-variant leading-relaxed">
-                Side-by-side benchmark studio across valuation, pool depth, and
-                security score.
-              </p>
-            </div>
-          </Link>
         </div>
 
         {/* Micro-Badge */}

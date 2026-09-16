@@ -3,7 +3,7 @@ import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 describe("TokenAvatar", () => {
-  it("renders builtin SVG for Robinhood chain tokens", () => {
+  it("requests a contract-specific icon instead of inventing a brand logo", () => {
     const { container } = render(
       <TokenAvatar
         symbol="$HOOD"
@@ -15,7 +15,9 @@ describe("TokenAvatar", () => {
     expect(span).toBeTruthy();
     expect(span?.getAttribute("style")).toContain("width: 28px");
     expect(span?.getAttribute("style")).toContain("height: 28px");
-    expect(container.querySelector("svg")).toBeTruthy();
+    const img = container.querySelector("img");
+    expect(img).toBeTruthy();
+    expect(img?.getAttribute("src")).toContain("/api/token-icon?address=");
   });
 
   it("renders builtin SVG for major crypto tokens like ETH", () => {

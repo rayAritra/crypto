@@ -10,12 +10,6 @@ const VERIFIED_TOKEN_ICONS: Record<string, string> = {
   usdt: "https://coin-images.coingecko.com/coins/images/325/large/Tether.png",
   dai: "https://coin-images.coingecko.com/coins/images/9956/large/Badge_Dai.png",
 
-  // Robinhood Ecosystem
-  hood: "/logo/hoodlens-mark-cyan.png",
-  rhx: "/logo/hoodlens-mark-black.png",
-  lens: "/logo/hoodlens-mark-white.png",
-  robin: "/logo/hoodlens-mark-cyan.png",
-
   // Major Crypto
   eth: "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png",
   weth: "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png",
@@ -54,10 +48,6 @@ const VERIFIED_ADDRESS_ICONS: Record<string, string> = {
   // USDG on Robinhood Chain
   "0x5fc5360d0400a0fd4f2af552add042d716f1d168":
     "https://coin-images.coingecko.com/coins/images/51281/large/GDN_USDG_Token_200x200.png?1730484111",
-  // Hood ecosystem
-  "0x71c5000000000000000000000000000000004490": "/logo/hoodlens-mark-cyan.png",
-  "0x892a00000000000000000000000000000000103f": "/logo/hoodlens-mark-black.png",
-  "0x3310000000000000000000000000000000008821": "/logo/hoodlens-mark-white.png",
 };
 
 const TICKER_ALIASES: Record<string, string> = {
@@ -66,8 +56,6 @@ const TICKER_ALIASES: Record<string, string> = {
   wsol: "sol",
   wavax: "avax",
   wbnb: "bnb",
-  rh: "hood",
-  robinhood: "hood",
 };
 
 export function resolveTokenIconUrl(

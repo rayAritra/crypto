@@ -1,23 +1,27 @@
 import { ActionStage } from "@/components/landing/ActionStage";
-import { CompareArenaPlayground } from "@/components/landing/CompareArenaPlayground";
 import { DiscoverPlayground } from "@/components/landing/DiscoverPlayground";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { WatchlistSimulatorPlayground } from "@/components/landing/WatchlistSimulatorPlayground";
+import { getEnv } from "@/config/env";
+import { discovery } from "@/lib/db/queries";
+import type { RankedToken } from "@/types/token";
 import type { Metadata } from "next";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
   description:
-    "Institutional clarity for Robinhood Chain. Real-time smart contract telemetry, deterministic risk forensics, multi-token benchmark matrix, and zero-tracking watchlists.",
+    "Institutional clarity for Robinhood Chain. Real-time smart contract telemetry, deterministic risk forensics, and zero-tracking watchlists.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
     description:
-      "Institutional clarity for Robinhood Chain. Real-time contract telemetry, zero-speculation risk scoring, multi-token benchmark matrix, and privacy-first watchlists.",
+      "Institutional clarity for Robinhood Chain. Real-time contract telemetry, zero-speculation risk scoring, and privacy-first watchlists.",
     url: "/",
     siteName: "HoodLens",
     type: "website",
@@ -34,12 +38,25 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "HoodLens — Institutional On-Chain Intelligence for Robinhood Chain",
     description:
-      "Institutional clarity for Robinhood Chain. Real-time contract telemetry, deterministic risk forensics, and multi-token benchmarks.",
+      "Institutional clarity for Robinhood Chain. Real-time contract telemetry and deterministic risk forensics.",
     images: ["/opengraph-image.png"],
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  let trending: RankedToken[] = [];
+  let newTokens: RankedToken[] = [];
+  let volume: RankedToken[] = [];
+
+  try {
+    const explorer = getEnv().ROBINHOOD_EXPLORER_URL;
+    [trending, newTokens, volume] = await Promise.all([
+      discovery("trending", explorer),
+      discovery("new", explorer),
+      discovery("volume", explorer),
+    ]);
+  } catch {}
+
   return (
     <div className="relative min-h-screen bg-[#080a08] text-on-surface font-sans selection:bg-[#c7ff5b] selection:text-[#080a08] overflow-x-hidden">
       {/* 0. DEDICATED TRANSPARENT LANDING APP BAR WITH JUST LOGO */}
@@ -50,15 +67,16 @@ export default function Home() {
         <LandingHero />
 
         {/* 2. PLAYGROUND 1: LIVE DISCOVERY RADAR (Interactive filter & liquidity slider) */}
-        <DiscoverPlayground />
+        <DiscoverPlayground
+          trending={trending}
+          newTokens={newTokens}
+          volume={volume}
+        />
 
-        {/* 3. PLAYGROUND 2: HEAD-TO-HEAD COMPARE ARENA (Interactive token battle bars) */}
-        <CompareArenaPlayground />
-
-        {/* 4. PLAYGROUND 3: ZERO-TRACKING WATCHLIST SIMULATOR (Interactive portfolio & PnL slider) */}
+        {/* 3. LOCAL WATCHLIST PREVIEW */}
         <WatchlistSimulatorPlayground />
 
-        {/* 7. ACTION STAGE: 3-CARD LAUNCHPAD */}
+        {/* 4. ACTION STAGE */}
         <ActionStage />
       </main>
 

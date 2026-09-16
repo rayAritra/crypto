@@ -1,5 +1,4 @@
 import { ActionStage } from "@/components/landing/ActionStage";
-import { CompareArenaPlayground } from "@/components/landing/CompareArenaPlayground";
 import { DiscoverPlayground } from "@/components/landing/DiscoverPlayground";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { LandingHeader } from "@/components/landing/LandingHeader";
@@ -28,12 +27,9 @@ export default function HomeV0() {
         <LandingHeroV0 />
 
         {/* 2. PLAYGROUND 1: LIVE DISCOVERY RADAR (Interactive filter & liquidity slider) */}
-        <DiscoverPlayground />
+        <DiscoverPlayground trending={[]} newTokens={[]} volume={[]} />
 
-        {/* 3. PLAYGROUND 2: HEAD-TO-HEAD COMPARE ARENA (Interactive token battle bars) */}
-        <CompareArenaPlayground />
-
-        {/* 4. PLAYGROUND 3: ZERO-TRACKING WATCHLIST SIMULATOR (Interactive portfolio & PnL slider) */}
+        {/* 3. LOCAL WATCHLIST PREVIEW */}
         <WatchlistSimulatorPlayground />
 
         {/* 7. ACTION STAGE: 3-CARD LAUNCHPAD */}

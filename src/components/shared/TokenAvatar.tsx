@@ -52,100 +52,12 @@ function normalizeTicker(ticker: string): string {
     wsol: "sol",
     wavax: "avax",
     wbnb: "bnb",
-    rh: "hood",
-    robinhood: "hood",
   };
   return map[ticker] || ticker;
 }
 
 function renderBuiltinIcon(ticker: string) {
   switch (ticker) {
-    case "hood":
-      return (
-        <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-          <rect width="32" height="32" rx="16" fill="#0b110b" />
-          <circle
-            cx="16"
-            cy="16"
-            r="14"
-            stroke="#c7ff5b"
-            strokeWidth="1"
-            strokeOpacity="0.3"
-          />
-          <path
-            d="M16 7.5C11.3 7.5 7.5 11.3 7.5 16C7.5 20.7 16 25.5 16 25.5C16 25.5 24.5 20.7 24.5 16C24.5 11.3 20.7 7.5 16 7.5Z"
-            fill="#c7ff5b"
-            fillOpacity="0.15"
-            stroke="#c7ff5b"
-            strokeWidth="1.8"
-          />
-          <circle cx="16" cy="15.5" r="3.2" fill="#c7ff5b" />
-        </svg>
-      );
-    case "rhx":
-      return (
-        <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-          <rect width="32" height="32" rx="16" fill="#0d140e" />
-          <path
-            d="M9 13H22L18 9"
-            stroke="#c7ff5b"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M23 19H10L14 23"
-            stroke="#43c98b"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    case "lens":
-      return (
-        <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-          <rect width="32" height="32" rx="16" fill="#081018" />
-          <circle
-            cx="16"
-            cy="16"
-            r="14"
-            stroke="#38bdf8"
-            strokeWidth="1"
-            strokeOpacity="0.3"
-          />
-          <circle cx="16" cy="16" r="8" stroke="#38bdf8" strokeWidth="1.8" />
-          <circle cx="16" cy="16" r="3.5" fill="#38bdf8" />
-          <path
-            d="M16 5V8M16 24V27M5 16H8M24 16H27"
-            stroke="#c7ff5b"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case "robin":
-      return (
-        <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-          <rect width="32" height="32" rx="16" fill="#180e0e" />
-          <circle
-            cx="16"
-            cy="16"
-            r="14"
-            stroke="#ff5252"
-            strokeWidth="1"
-            strokeOpacity="0.3"
-          />
-          <path
-            d="M11 22C11 22 13 14 19 10C19 10 21 16 15 20L11 22Z"
-            fill="#ff5252"
-          />
-          <path
-            d="M14 18C14 18 16 13 21 9C21 9 22 14 18 17L14 18Z"
-            fill="#c7ff5b"
-          />
-        </svg>
-      );
     case "eth":
       return (
         <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">

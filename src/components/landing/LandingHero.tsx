@@ -12,10 +12,7 @@ const CRYPTO_TOKENS = [
   "ETH",
   "USDT",
   "USDC",
-  "HOOD",
-  "RHX",
   "SOL",
-  "LENS",
   "ARB",
   "OP",
   "LINK",
@@ -142,8 +139,6 @@ export function LandingHero() {
             "BTC",
             "ETH",
             "USDT",
-            "HOOD",
-            "RHX",
             "USDC",
             "L2",
             "EVM",
@@ -400,29 +395,27 @@ export function LandingHero() {
               <div className="text-[10px] font-data-mono-sm text-outline truncate flex items-center gap-1.5 flex-wrap">
                 <span className="inline-flex items-center gap-1 text-white/80">
                   <TokenAvatar
-                    symbol="HOOD"
-                    address="0x71c5000000000000000000000000000000004490"
+                    symbol="ETH"
                     size={13}
                   />
-                  <span>$HOOD</span>
+                  <span>ETH</span>
                 </span>
                 <span>•</span>
                 <span className="inline-flex items-center gap-1 text-white/80">
                   <TokenAvatar
-                    symbol="RHX"
-                    address="0x892a00000000000000000000000000000000103f"
+                    symbol="USDC"
                     size={13}
                   />
-                  <span>$RHX</span>
+                  <span>USDC</span>
                 </span>
                 <span>•</span>
                 <span className="inline-flex items-center gap-1 text-white/80">
                   <TokenAvatar
-                    symbol="LENS"
-                    address="0x3310000000000000000000000000000000008821"
+                    symbol="USDG"
+                    address="0x5fc5360d0400a0fd4f2af552add042d716f1d168"
                     size={13}
                   />
-                  <span>$LENS</span>
+                  <span>USDG</span>
                 </span>
                 <span className="hidden min-[420px]:inline text-outline">
                   • paste L2 contract

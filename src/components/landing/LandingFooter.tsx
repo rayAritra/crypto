@@ -21,9 +21,6 @@ export function LandingFooter() {
           <Link href="/discover" className="hover:text-white transition-colors">
             Discover
           </Link>
-          <Link href="/compare" className="hover:text-white transition-colors">
-            Compare
-          </Link>
           <Link
             href="/watchlist"
             className="hover:text-white transition-colors"

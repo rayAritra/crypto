@@ -1,31 +1,22 @@
 "use client";
 
-import { useAppState } from "@/components/providers/AppState";
-import { Button } from "@/components/shared/Button";
 import { Logo } from "@/components/shared/Logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { FiArrowRight, FiMenu, FiSearch, FiX } from "react-icons/fi";
+import { FiMenu, FiSearch, FiX } from "react-icons/fi";
 import { WalletButton } from "@/components/wallet/WalletButton";
 
 const navLinks = [
   { href: "/terminal", label: "Terminal" },
   { href: "/discover", label: "Discover" },
   { href: "/watchlist", label: "Watchlist" },
-  { href: "/compare", label: "Compare" },
   { href: "/access", label: "Access" },
 ];
 
 export function LandingHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const path = usePathname();
-  const state = useAppState();
-
-  const compareHref =
-    state.ready && state.compare.length >= 2
-      ? `/compare?tokens=${state.compare.map((x) => x.address).join(",")}`
-      : "/compare";
 
   function triggerSearch() {
     window.dispatchEvent(new CustomEvent("hoodlens:open-search"));
@@ -74,23 +65,6 @@ export function LandingHeader() {
                 ⌘K
               </kbd>
             </button>
-
-            {/* Compare Button */}
-            <Button
-              variant="primary"
-              size="sm"
-              href={compareHref}
-              icon={<FiArrowRight className="hidden min-[400px]:inline text-[13px]" />}
-              iconPosition="right"
-              className="px-2 min-[400px]:px-2.5"
-            >
-              <span className="min-[400px]:hidden">Compare</span>
-              <span className="hidden min-[400px]:inline">
-                {state.ready && state.compare.length >= 2
-                  ? `Compare ${state.compare.length} Tokens`
-                  : "Compare 2 Tokens"}
-              </span>
-            </Button>
 
             <WalletButton compact />
 
